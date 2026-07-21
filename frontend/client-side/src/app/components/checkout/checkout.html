@@ -1,0 +1,449 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Check Out</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <a routerLink="/shop">Shop</a>
+                        <span>Check Out</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout Section Begin -->
+<section class="checkout spad">
+    <div class="container">
+        <div class="checkout__form">
+            <form (submit)="placeOrder()">
+                <div class="row">
+                    <div class="col-lg-8 col-md-12 col-sm-12">
+                        <h6 class="coupon__code">
+                            <span class="icon_tag_alt"></span> Have a coupon?
+                            <a href="javascript:void(0)" (click)="toggleCouponInput()">Click here</a> to enter your code
+                        </h6>
+
+                        @if (showCouponInput) {
+                        <div class="checkout__coupon-box"
+                            style="margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                            <mat-form-field appearance="outline" subscriptSizing="dynamic"
+                                style="flex: 1; max-width: 280px; min-width: 180px;">
+                                <mat-label>Coupon Code</mat-label>
+                                <input matInput [(ngModel)]="couponCode" name="couponCode" placeholder="Try: FIRSTBUY"
+                                    (keyup.enter)="applyCoupon()">
+                            </mat-form-field>
+                            <button type="button" class="btn-apply-coupon" (click)="applyCoupon()">
+                                Apply
+                            </button>
+                        </div>
+                        }
+
+                        @if (appliedCoupon) {
+                        <div class="checkout__coupon-status"
+                            style="margin-bottom: 25px; padding: 12px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #16a34a;">
+                                <i class="fa fa-check-circle"></i> Coupon <strong>{{ appliedCoupon }}</strong> applied!
+                                (Saved ₹{{ discountAmount }})
+                            </span>
+                            <button type="button" (click)="removeCoupon()"
+                                style="background: none; border: none; font-size: 12px; font-weight: 700; color: #dc2626; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                <i class="fa fa-trash"></i> Remove
+                            </button>
+                        </div>
+                        }
+
+                        <!-- Saved Addresses Selector Section -->
+                        @if (savedAddresses && savedAddresses.length > 0) {
+                            <h6 class="checkout__title">Select Delivery Address</h6>
+                            <div class="checkout__saved-addresses">
+                                @for (addr of savedAddresses; track idx; let idx = $index) {
+                                    <div class="checkout__address-card" 
+                                         [class.selected]="selectedSavedAddressIndex === idx"
+                                         (click)="selectSavedAddress(idx)">
+                                        <div class="address-card-header">
+                                            <span class="type-badge">{{ addr.addressType | uppercase }}</span>
+                                            @if (addr.isDefault) {
+                                                <span class="default-badge">DEFAULT</span>
+                                            }
+                                        </div>
+                                        <h6>{{ addr.firstName }} {{ addr.lastName }}</h6>
+                                        <p>{{ addr.flatNo }}, {{ addr.areaName }}, {{ addr.city }}, {{ addr.state }} - {{ addr.postcode }}</p>
+                                        <span class="phone-text">Phone: {{ addr.phone }}</span>
+                                    </div>
+                                }
+                                <div class="checkout__address-card use-new-card" 
+                                     [class.selected]="selectedSavedAddressIndex === -1"
+                                     (click)="selectSavedAddress(-1)">
+                                    <div class="new-address-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </div>
+                                    <h6>+ Use New Address</h6>
+                                    <p>Enter a different delivery address below.</p>
+                                </div>
+                            </div>
+                        }
+
+                        <h6 class="checkout__title">
+                            {{ selectedSavedAddressIndex === -1 ? 'Enter Delivery Details' : 'Selected Delivery Address Details' }}
+                        </h6>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>First Name</mat-label>
+                                        <input matInput [(ngModel)]="firstName" name="firstName" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>Last Name</mat-label>
+                                        <input matInput [(ngModel)]="lastName" name="lastName" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input_material">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>Country / Region</mat-label>
+                                <input matInput [(ngModel)]="country" name="country" required [disabled]="true">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Pincode / ZIP (Auto-fill trigger) -->
+                        <div class="checkout__input_material">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>PIN Code / Postcode</mat-label>
+                                <input matInput type="text" [(ngModel)]="postcode" (input)="validatePostcode($event)"
+                                    name="postcode" required placeholder="6-digit Indian PIN code" maxlength="6">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Flat / House No / Building -->
+                        <div class="checkout__input_material">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>Flat, House No., Building, Apartment</mat-label>
+                                <input matInput [(ngModel)]="flatNo" name="flatNo" required
+                                    placeholder="e.g. Flat 101, Gokul Residency">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Area / Colony / Street -->
+                        <div class="checkout__input_material">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>Area, Colony, Street, Sector</mat-label>
+                                <input matInput [(ngModel)]="areaName" name="areaName" required
+                                    placeholder="e.g. Ring Road, Katargam">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Landmark -->
+                        <div class="checkout__input_material">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>Landmark</mat-label>
+                                <input matInput [(ngModel)]="landmark" name="landmark" required
+                                    placeholder="e.g. Near Diamond Market">
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Town / City & State (Auto-filled by Pincode) -->
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>Town / City</mat-label>
+                                        <input matInput [(ngModel)]="city" name="city" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>State</mat-label>
+                                        <input matInput [(ngModel)]="state" name="state" required>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>Phone</mat-label>
+                                        <input matInput type="text" [(ngModel)]="phone" (input)="validatePhone($event)"
+                                            name="phone" required placeholder="10-digit mobile number" maxlength="10">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input_material">
+                                    <mat-form-field appearance="outline" style="width: 100%;">
+                                        <mat-label>Email Address</mat-label>
+                                        <input matInput type="email" [(ngModel)]="email" name="email" required
+                                            placeholder="name@domain.com">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Address Type Selection (Home vs Office) -->
+                        <div class="checkout__address-type-container">
+                            <p class="address-type-heading">Address Type<span>*</span></p>
+                            <div class="address-type-buttons">
+                                <button type="button" class="btn-addr-type" [class.active]="addressType === 'home'"
+                                    (click)="setAddressType('home')">
+                                    <i class="fa fa-home"></i> Home (All day delivery)
+                                </button>
+                                <button type="button" class="btn-addr-type" [class.active]="addressType === 'office'"
+                                    (click)="setAddressType('office')">
+                                    <i class="fa fa-building"></i> Office (10 AM - 6 PM)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="checkout__input_material" style="margin-top: 15px;">
+                            <mat-form-field appearance="outline" style="width: 100%;">
+                                <mat-label>Order Notes (Optional)</mat-label>
+                                <textarea matInput [(ngModel)]="orderNotes" name="orderNotes"
+                                    placeholder="Notes about your order, e.g. special notes for delivery."
+                                    rows="3"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="checkout__order_modern">
+                            <h4 class="order__title_modern">Order Summary</h4>
+
+                            <!-- Product Row Cards -->
+                            <div class="checkout__products-summary">
+                                @for (item of cartItems; track item.key) {
+                                <div class="summary-product-card">
+                                    <div class="product-image-container">
+                                        <img [src]="item.image" alt="{{ item.name }}" class="product-thumbnail">
+                                    </div>
+                                    <div class="product-info-container">
+                                        <h6 class="product-title-name">{{ item.name }}</h6>
+
+                                        <!-- Variant Display & Edit Trigger -->
+                                        <p class="product-variant-details">
+                                            Size: <strong>{{ item.size }}</strong> | Color: <strong>{{ item.colorName
+                                                }}</strong>
+                                            <button type="button" class="checkout__edit__btn"
+                                                (click)="openEditModal(item)">
+                                                <i class="fa fa-pencil"></i> Edit Size/Color
+                                            </button>
+                                        </p>
+
+                                        <!-- Inline Quantity Adjuster -->
+                                        <div class="checkout-qty-selector">
+                                            <button type="button" class="btn-qty-chg"
+                                                (click)="decrementQty(item)">-</button>
+                                            <span class="qty-display-val">{{ item.quantity }}</span>
+                                            <button type="button" class="btn-qty-chg"
+                                                (click)="incrementQty(item)">+</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price & Delete Action (End of the item card) -->
+                                    <div class="product-actions-container"
+                                        style="align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; min-width: 75px;">
+                                        <span style="font-size: 13px; font-weight: 700; color: #111;">
+                                            ₹ {{ (item.price * item.quantity).toFixed(2) }}
+                                        </span>
+                                        <span class="checkout-delete-btn" (click)="removeItem(item)"
+                                            style="cursor: pointer; margin-right: 6px; display: inline-flex; align-items: center; justify-content: center; user-select: none;">
+                                            <mat-icon class="cart-remove-icon">delete</mat-icon>
+                                        </span>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+
+                            <!-- Bill Details Summary -->
+                            <div class="checkout__bill-summary">
+                                <h5 class="bill-summary-title">Bill Details</h5>
+                                <ul class="bill-summary-list">
+                                    <li>
+                                        Total MRP (Subtotal)
+                                        <span>₹ {{ subtotal.toFixed(2) }}</span>
+                                    </li>
+                                    @if (discountAmount > 0) {
+                                    <li class="bill-discount-row">
+                                        Coupon Discount
+                                        <span>- ₹ {{ discountAmount.toFixed(2) }}</span>
+                                    </li>
+                                    }
+                                    <li>
+                                        Delivery Charges
+                                        <span class="free-delivery-badge">FREE</span>
+                                    </li>
+                                </ul>
+                                <div class="bill-total-payable">
+                                    Total Payable
+                                    <span>₹ {{ total.toFixed(2) }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Modern Payment Methods Selection -->
+                            <div class="payment-methods-selector">
+                                <h5 class="payment-methods-title">Choose Payment Method</h5>
+
+                                <div class="payment-tabs">
+                                    <!-- Cashfree Online Option -->
+                                    @if (isCashfreeEnabled) {
+                                    <div class="payment-tab-option" [class.active]="selectedPaymentMethod === 'cashfree'"
+                                        (click)="selectPaymentMethod('cashfree')">
+                                        <div class="tab-header">
+                                            <span class="custom-radio"></span>
+                                            <span class="tab-label"><i class="fa fa-credit-card"></i> Pay Online (Cards, UPI, Netbanking)</span>
+                                        </div>
+                                    </div>
+                                    @if (selectedPaymentMethod === 'cashfree') {
+                                    <div class="payment-sub-content">
+                                        <p class="cod-desc-text"
+                                            style="font-size: 11px; color: #16a34a; margin: 0; line-height: 1.4; font-weight: 500;">
+                                            <i class="fa fa-lock"></i> Secured payment via Cashfree Payment Gateway.
+                                        </p>
+                                    </div>
+                                    }
+                                    }
+
+
+                                    <!-- Razorpay Online Option -->
+                                    @if (isCardEnabled) {
+                                    <div class="payment-tab-option" [class.active]="selectedPaymentMethod === 'card'"
+                                        (click)="selectPaymentMethod('card')">
+                                        <div class="tab-header">
+                                            <span class="custom-radio"></span>
+                                            <span class="tab-label"><i class="fa fa-credit-card-alt"></i> Razorpay (Cards, UPI, Netbanking, Wallets)</span>
+                                        </div>
+                                    </div>
+                                    @if (selectedPaymentMethod === 'card') {
+                                    <div class="payment-sub-content">
+                                        <p class="cod-desc-text"
+                                            style="font-size: 11px; color: #16a34a; margin: 0; line-height: 1.4; font-weight: 500;">
+                                            <i class="fa fa-lock"></i> Secured payment via Razorpay Payment Gateway.
+                                        </p>
+                                    </div>
+                                    }
+                                    }
+
+                                    <!-- COD Option -->
+                                    @if (isCodEnabled) {
+                                    <div class="payment-tab-option" [class.active]="selectedPaymentMethod === 'cod'"
+                                        (click)="selectPaymentMethod('cod')">
+                                        <div class="tab-header">
+                                            <span class="custom-radio"></span>
+                                            <span class="tab-label"><i class="fa fa-money"></i> Cash on Delivery
+                                                (COD)</span>
+                                        </div>
+                                    </div>
+                                    @if (selectedPaymentMethod === 'cod') {
+                                    <div class="payment-sub-content">
+                                        <p class="cod-desc-text"
+                                            style="font-size: 11px; color: #666; margin: 0; line-height: 1.4;">
+                                            Pay with cash upon delivery of your products at home.
+                                        </p>
+                                    </div>
+                                    }
+                                    }
+                                </div>
+                            </div>
+
+                            <button type="submit" class="site-btn-order-place" style="margin-top: 15px;">
+                                 @if (selectedPaymentMethod === 'cashfree') {
+                                 SECURE PAY & PLACE ORDER
+                                 } @else if (selectedPaymentMethod === 'card') {
+                                 PAY & PLACE ORDER
+                                 } @else {
+                                 PLACE COD ORDER
+                                 }
+                             </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- Checkout Section End -->
+
+<!-- ===================== EDIT VARIANT MODAL ===================== -->
+@if (showEditModal && editingItem) {
+<div class="em-backdrop" (click)="closeEditModal()">
+    <div class="em-modal" (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="em-header">
+            <div class="em-header-left">
+                <i class="fa fa-pencil-square-o"></i>
+                <span>Edit Size &amp; Color</span>
+            </div>
+            <button type="button" class="em-close-btn" (click)="closeEditModal()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        @if (!editingProduct) {
+            <div class="em-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 180px; gap: 12px;">
+                <div class="em-loader-spinner"></div>
+                <span style="font-size: 13px; color: #666; font-weight: 500;">Loading options...</span>
+            </div>
+        } @else {
+            <div class="em-content">
+                <!-- Product Brief -->
+                <div class="em-product-brief">
+                    <img [src]="tempSelectedColorImage || editingProduct.image" alt="">
+                    <div>
+                        <h5>{{ editingProduct.name }}</h5>
+                        <p class="em-price">₹{{ editingItemPrice.toFixed(2) }}</p>
+                    </div>
+                </div>
+
+                <!-- Color Option -->
+                <div class="em-option-group">
+                    <div class="em-option-label">Select Color: <strong>{{ tempSelectedColorName }}</strong></div>
+                    <div class="em-color-list">
+                        @for (color of editingProduct.colors; track color.name) {
+                        <label class="em-color-swatch" [class.em-color-active]="tempSelectedColorClass === color.class"
+                            [style.background-color]="color.hex" [title]="color.name" (click)="selectTempColor(color)">
+                            <input type="radio" style="display:none;">
+                        </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Size Option -->
+                <div class="em-option-group">
+                    <div class="em-option-label">Select Size: <strong>{{ tempSelectedSize }}</strong></div>
+                    <div class="em-size-list">
+                        @for (size of editingProduct.sizes; track size) {
+                        <button type="button" class="em-size-btn" [class.em-size-active]="tempSelectedSize === size"
+                            (click)="selectTempSize(size)">
+                            {{ size }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="em-footer">
+                <button type="button" class="em-btn-cancel" (click)="closeEditModal()">Cancel</button>
+                <button type="button" class="em-btn-save" (click)="saveItemChanges()">Save Changes</button>
+            </div>
+        }
+
+    </div>
+</div>
+}

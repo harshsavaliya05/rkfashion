@@ -1,0 +1,258 @@
+.overview__header {
+  margin-bottom: 30px;
+
+  h3 {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    color: #111111;
+    font-size: 24px;
+    margin-bottom: 8px;
+
+    span {
+      color: #1e0a3c;
+    }
+  }
+
+  p {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+}
+
+.overview__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #1e0a3c;
+    box-shadow: 0 4px 15px rgba(30, 10, 60, 0.05);
+  }
+
+  .stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .stat-info {
+    h4 {
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #111111;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 12px;
+      color: #777777;
+      margin-bottom: 0;
+      font-weight: 600;
+    }
+  }
+
+  // Different accents
+  &.orders-card {
+    .stat-icon {
+      background: var(--primary-bg);
+      svg { stroke: #1e0a3c; }
+    }
+  }
+
+  &.wishlist-card {
+    .stat-icon {
+      background: #fff0f5;
+      svg { stroke: #d63384; }
+    }
+  }
+
+  &.cart-card {
+    .stat-icon {
+      background: #f0f7ff;
+      svg { stroke: #0d6efd; }
+    }
+  }
+}
+
+.info-card {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f2f2f2;
+
+    h5 {
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #111111;
+      margin-bottom: 0;
+    }
+
+    .edit-link {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e0a3c;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__body {
+    padding: 20px;
+    flex-grow: 1;
+  }
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  li {
+    display: flex;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.4;
+
+    .label {
+      width: 120px;
+      color: #777777;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .value {
+      color: #111111;
+      font-weight: 700;
+      word-break: break-word;
+    }
+  }
+}
+
+.address-summary {
+  position: relative;
+
+  .address-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 9px;
+    font-weight: 800;
+    background: #f2f2f2;
+    color: #444;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  h6 {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #111111;
+    margin-bottom: 8px;
+  }
+
+  .address-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13.5px;
+    color: #555555;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .phone-text {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 0;
+  }
+}
+
+.no-address {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 15px 0;
+  height: 100%;
+
+  svg {
+    width: 36px;
+    height: 36px;
+    stroke: #aaa;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 12px;
+  }
+
+  .add-address-btn {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    background: #1e0a3c;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--primary-color);
+    }
+  }
+}
+
+
+

@@ -1,0 +1,87 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Account</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <span>Register</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Register Section Begin -->
+<section class="register spad">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="auth__card">
+                    <div class="auth__header">
+                        <h2>Create Account</h2>
+                        <div class="auth__divider"></div>
+                        <p>Join RK Fashion to track orders and save your wishlist!</p>
+                    </div>
+
+                    <form (submit)="handleRegisterSubmit($event)" class="auth__form">
+                        <div class="auth__form-group">
+                            <label for="name">Full Name <span>*</span></label>
+                            <input type="text" 
+                                   id="name" 
+                                   placeholder="Enter your full name" 
+                                   name="name"
+                                   [(ngModel)]="nameInput" 
+                                   required>
+                        </div>
+                        <div class="auth__form-group">
+                            <label for="email">Email Address <span>*</span></label>
+                            <input type="email" 
+                                   id="email" 
+                                   placeholder="Enter your email address" 
+                                   name="email"
+                                   [(ngModel)]="emailInput" 
+                                   required>
+                        </div>
+                        <div class="auth__form-group">
+                            <label for="password">Password <span>*</span></label>
+                            <input type="password" 
+                                   id="password" 
+                                   placeholder="Create a password" 
+                                   name="password"
+                                   [(ngModel)]="passwordInput" 
+                                   required>
+                        </div>
+                        <div class="auth__form-group">
+                            <label for="confirmpassword">Confirm Password <span>*</span></label>
+                            <input type="password" 
+                                   id="confirmpassword" 
+                                   placeholder="Re-enter your password" 
+                                   name="confirmpassword"
+                                   [(ngModel)]="confirmPasswordInput" 
+                                   required>
+                        </div>
+                        
+                        <button type="submit" class="auth__btn" [disabled]="isLoading">
+                            @if (isLoading) {
+                                <span class="auth__spinner"></span> Creating Account...
+                            } @else {
+                                Create Account
+                            }
+                        </button>
+                    </form>
+
+                    <div class="auth__footer">
+                        <span>Already have an account? </span>
+                        <a routerLink="/login">Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Register Section End -->

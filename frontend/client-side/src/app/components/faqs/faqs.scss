@@ -1,0 +1,122 @@
+.faqs.spad {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  background-color: #fcfcfc;
+}
+
+.faqs__header {
+  text-align: center;
+  margin-bottom: 45px;
+
+  h2 {
+    color: #111111;
+    font-weight: 800;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .faqs__divider {
+    width: 60px;
+    height: 3px;
+    background-color: #e53637;
+    margin: 0 auto 16px auto;
+    border-radius: 2px;
+  }
+
+  p {
+    color: #666666;
+    font-size: 15px;
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+}
+
+.faqs__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faqs__item {
+  background: #ffffff;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: rgba(229, 54, 55, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  }
+
+  &.faqs__item--active {
+    border-color: rgba(229, 54, 55, 0.2);
+    background-color: rgba(229, 54, 55, 0.01);
+    box-shadow: 0 8px 30px rgba(229, 54, 55, 0.03);
+
+    .faqs__question {
+      color: #e53637;
+    }
+
+    .faqs__chevron {
+      transform: rotate(180deg);
+      color: #e53637;
+    }
+  }
+}
+
+.faqs__question {
+  padding: 22px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 750;
+  font-size: 16px;
+  color: #111111;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  .faqs__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  .faqs__chevron {
+    width: 18px;
+    height: 18px;
+    color: #888888;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.25s ease;
+  }
+}
+
+.faqs__answer {
+  padding: 0 28px 24px 28px;
+  font-size: 14.5px;
+  color: #555555;
+  line-height: 1.6;
+  animation: slideDownFade 0.22s ease-out;
+  text-align: left;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+@keyframes slideDownFade {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

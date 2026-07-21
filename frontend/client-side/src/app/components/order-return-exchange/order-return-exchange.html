@@ -1,0 +1,417 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option" style="background: #f3f2ee; padding: 30px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4 style="font-weight: 700; color: #111111; text-transform: uppercase; margin-bottom: 8px;">Order {{ requestType }}</h4>
+                    <div class="breadcrumb__links" style="font-size: 14px;">
+                        <a routerLink="/" style="color: #111111; font-weight: 600; text-decoration: none; margin-right: 6px;">Home</a>
+                        <span style="color: #888; margin-right: 6px;">/</span>
+                        <a routerLink="/account/orders" style="color: #111111; font-weight: 600; text-decoration: none; margin-right: 6px;">My Orders</a>
+                        <span style="color: #888; margin-right: 6px;">/</span>
+                        <span style="color: #888;">{{ requestType }} Request</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Return / Exchange Content Begin -->
+<section class="return-exchange-section" style="padding: 60px 0; background: #ffffff;">
+    <div class="container">
+        
+        <!-- Loading State -->
+        @if (isLoading) {
+            <div class="text-center py-5" style="color: #777777;">
+                <i class="fa fa-spinner fa-spin" style="font-size: 40px; color: #1e0a3c; margin-bottom: 15px;"></i>
+                <h5 style="font-weight: 700; color: #111111;">Loading Order Details...</h5>
+                <p style="font-size: 13px;">Retrieving products list and address details securely.</p>
+            </div>
+        } @else if (order) {
+            @if (!hasExistingRequest) {
+                <div class="row" style="row-gap: 30px;">
+                
+                <!-- Left Form Column -->
+                <div class="col-lg-8">
+                    <div class="re-form-card" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 25px; background: #ffffff;">
+                        
+                        <!-- Step 1: Checklist -->
+                        <div class="re-section mb-4">
+                            <span class="re-label" style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block;">1. Select Items to {{ requestType }}</span>
+                            
+                            <div class="re-items-list" style="display: flex; flex-direction: column; gap: 15px;">
+                                @for (item of order.items; track item.key) {
+                                    <div class="re-item-row" [class.selected]="selectedItems[item.key]" (click)="toggleItemSelection(item.key)"
+                                         style="display: flex; align-items: center; gap: 15px; padding: 15px; border: 1.5px solid #ebebeb; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">
+                                        
+                                        <input type="checkbox" class="re-checkbox" [checked]="selectedItems[item.key]" (click)="$event.stopPropagation(); toggleItemSelection(item.key)"
+                                               style="width: 20px; height: 20px; accent-color: #1e0a3c; cursor: pointer; flex-shrink: 0;">
+                                        
+                                        <img [src]="item.image" [alt]="item.name" style="width: 55px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #eaeaea; flex-shrink: 0;">
+                                        
+                                        <div class="re-meta" style="flex-grow: 1; min-width: 0; text-align: left;">
+                                            <h6 style="margin: 0 0 5px 0; font-weight: 700; font-size: 14px; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</h6>
+                                            <span style="font-size: 12.5px; color: #666;">
+                                                Size: <strong style="color: #111;">{{ item.size }}</strong> | 
+                                                Color: <strong style="color: #111;">{{ item.colorName }}</strong> | 
+                                                Qty: <strong style="color: #111;">{{ item.quantity }}</strong>
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Exchange target size dropdown -->
+                                        @if (requestType === 'Exchange' && selectedItems[item.key]) {
+                                            <div (click)="$event.stopPropagation();" style="display: flex; flex-direction: column; gap: 3px; flex-shrink: 0;">
+                                                <span style="font-size: 9px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.3px;">New Size</span>
+                                                <select [(ngModel)]="selectedItemSizes[item.key]" 
+                                                        style="height: 34px; border: 1px solid #d1d1d1; border-radius: 4px; padding: 0 8px; font-size: 12px; font-weight: 700; color: #111; cursor: pointer; background: #fff; width: 90px;">
+                                                    <option value="XS">XS</option>
+                                                    <option value="S">S</option>
+                                                    <option value="M">M</option>
+                                                    <option value="L">L</option>
+                                                    <option value="XL">XL</option>
+                                                    <option value="2XL">2XL</option>
+                                                    <option value="3XL">3XL</option>
+                                                    <option value="28">28</option>
+                                                    <option value="30">30</option>
+                                                    <option value="32">32</option>
+                                                    <option value="34">34</option>
+                                                    <option value="36">36</option>
+                                                    <option value="38">38</option>
+                                                    <option value="40">40</option>
+                                                </select>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Reason -->
+                        <div class="re-section mb-4">
+                            <label style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #888; text-transform: uppercase; margin-bottom: 10px; display: block;">2. Reason for {{ requestType }}</label>
+                            <select class="form-control" [(ngModel)]="returnReason" 
+                                    style="height: 45px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; color: #333; cursor: pointer;">
+                                <option value="Size doesn't fit (Too small)">Size doesn't fit (Too small)</option>
+                                <option value="Size doesn't fit (Too large)">Size doesn't fit (Too large)</option>
+                                <option value="Defective / Damaged product">Defective / Damaged product</option>
+                                <option value="Product not as shown in image">Product not as shown in image</option>
+                                <option value="Incorrect item received">Incorrect item received</option>
+                                <option value="Changed my mind / Don't want it anymore">Changed my mind / Don't want it anymore</option>
+                            </select>
+                        </div>
+
+                        <!-- Step 3: Refund Options (Return Only) -->
+                        @if (requestType === 'Return') {
+                            <div class="re-section mb-4">
+                                <label style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #888; text-transform: uppercase; margin-bottom: 10px; display: block;">3. Refund Payment Preference</label>
+                                <select class="form-control mb-3" [(ngModel)]="refundMethod"
+                                        style="height: 45px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; color: #333; cursor: pointer;">
+                                    @if (!order.paymentMethod.toLowerCase().includes('cash on delivery') && !order.paymentMethod.toLowerCase().includes('cod')) {
+                                        <option value="Original Payment Mode">Refund to Original Payment Mode (Automatic Online Refund via Cashfree)</option>
+                                    } @else {
+                                        <option value="UPI ID Transfer">Transfer to UPI ID</option>
+                                        <option value="Bank Account Transfer">Transfer to Bank Account</option>
+                                    }
+                                </select>
+
+                                @if (refundMethod === 'UPI ID Transfer') {
+                                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                                        <label style="font-size: 12px; font-weight: 700; color: #444; text-align: left;">Enter UPI ID</label>
+                                        <input type="text" class="form-control" placeholder="e.g. mobileNumber@ybl / name@upi" [(ngModel)]="upiId"
+                                               style="height: 42px; font-size: 13px; border-radius: 6px; border-color: #eaeaea;">
+                                    </div>
+                                }
+
+                                @if (refundMethod === 'Bank Account Transfer') {
+                                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <label style="font-size: 11.5px; font-weight: 700; color: #444; text-align: left;">Account Holder Name</label>
+                                            <input type="text" class="form-control" placeholder="e.g. Harsh Savaliya" [(ngModel)]="bankHolderName"
+                                                   style="height: 40px; font-size: 13px; border-radius: 6px; border-color: #eaeaea;">
+                                        </div>
+                                        <div style="display: flex; gap: 12px;">
+                                            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                                <label style="font-size: 11.5px; font-weight: 700; color: #444; text-align: left;">Account Number</label>
+                                                <input type="text" class="form-control" placeholder="e.g. 123456789" [(ngModel)]="bankAccNo"
+                                                       style="height: 40px; font-size: 13px; border-radius: 6px; border-color: #eaeaea;">
+                                            </div>
+                                            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                                <label style="font-size: 11.5px; font-weight: 700; color: #444; text-align: left;">IFSC Code</label>
+                                                <input type="text" class="form-control" placeholder="e.g. SBIN0001234" [(ngModel)]="bankIfsc"
+                                                       style="height: 40px; font-size: 13px; border-radius: 6px; border-color: #eaeaea;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <!-- Step 4: Comments -->
+                        <div class="re-section mb-2">
+                            <label style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #888; text-transform: uppercase; margin-bottom: 10px; display: block;">
+                                {{ requestType === 'Return' ? '4. Additional Comments' : '3. Additional Comments' }} (Optional)
+                            </label>
+                            <textarea class="form-control" rows="3" placeholder="Describe details about your return/exchange request..." [(ngModel)]="comments"
+                                      style="font-size: 13px; border-radius: 6px; border-color: #eaeaea; resize: vertical; min-height: 80px;"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Summary Column -->
+                <div class="col-lg-4">
+                    <div class="re-summary-card" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 25px; background: #fafafa; position: sticky; top: 30px;">
+                        <h5 style="font-weight: 700; color: #111111; border-bottom: 1.5px solid #eaeaea; padding-bottom: 15px; margin-bottom: 20px;">Order Summary</h5>
+                        
+                        <div style="font-size: 13px; line-height: 1.6; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #666;">Order ID:</span>
+                                <strong style="color: #111; font-family: monospace;">{{ order.orderId }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #666;">Date Placed:</span>
+                                <strong style="color: #111;">{{ order.date }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #666;">Payment:</span>
+                                <strong style="color: #111;">{{ order.paymentMethod }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eaeaea; padding-bottom: 12px; margin-bottom: 5px;">
+                                <span style="color: #666;">Grand Total:</span>
+                                <strong style="color: #1e0a3c;">₹{{ order.total.toFixed(2) }}</strong>
+                            </div>
+                            
+                            <div style="text-align: left; margin-bottom: 15px;">
+                                <strong style="color: #111; font-size: 12.5px; display: block; margin-bottom: 4px;">Shipped To:</strong>
+                                <span style="color: #666; font-size: 12.5px;">
+                                    {{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}, 
+                                    {{ order.shippingAddress.flatNo }}, {{ order.shippingAddress.areaName }}, 
+                                    {{ order.shippingAddress.city }} - {{ order.shippingAddress.postcode }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Submit / Cancel Action Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <button type="button" class="btn-submit-req" (click)="submitRequest()" [disabled]="isSubmitting"
+                                    style="width: 100%; height: 46px; background: #1e0a3c; color: #ffffff; border: none; font-weight: 700; font-size: 14px; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <span *ngIf="!isSubmitting">Confirm {{ requestType }}</span>
+                                <span *ngIf="isSubmitting"><i class="fa fa-spinner fa-spin"></i> Submitting...</span>
+                            </button>
+                            
+                            <a routerLink="/account/orders" class="btn-cancel-req"
+                               style="width: 100%; height: 46px; background: transparent; color: #666666; border: 1.5px solid #d1d1d1; font-weight: 700; font-size: 14px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                                Cancel Request
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            } @else {
+                <!-- Custom read-only Request Details View -->
+                <div class="row" style="row-gap: 30px;">
+                    <!-- Full Width Details Card -->
+                    <div class="col-lg-12">
+                        <div class="re-form-card" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 30px; background: #ffffff;">
+                            
+                            <!-- Header with Status -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #eaeaea; padding-bottom: 15px; margin-bottom: 25px; flex-wrap: wrap; gap: 10px;">
+                                <div style="text-align: left;">
+                                    <h5 style="font-weight: 700; color: #111; text-transform: uppercase; margin: 0; font-family: 'Outfit';">Request Summary</h5>
+                                    <span style="font-size: 13px; color: #666; font-family: 'Outfit';">Associated Order ID: <strong style="font-family: monospace;">{{ order.orderId }}</strong></span>
+                                </div>
+                                <span class="badge" 
+                                      [ngStyle]="{'background-color': existingRequest.status === 'Approved' ? '#10b981' : existingRequest.status === 'Rejected' ? '#ef4444' : '#0dcaf0', 'color': '#fff'}"
+                                      style="font-size: 12px; padding: 6px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 700;">
+                                    {{ existingRequest.status }}
+                                </span>
+                            </div>
+
+                            <!-- Rejected Warning Banner -->
+                            @if (existingRequest.status === 'Rejected') {
+                                <div class="alert alert-danger mb-4 p-3" style="background: #fff5f5; border: 1px solid #ffe4e4; border-radius: 8px; color: #991b1b; text-align: left;">
+                                    <h6 style="margin: 0 0 8px 0; font-weight: 700; font-family: 'Outfit';"><i class="fa fa-exclamation-triangle"></i> Request Rejected by Administrator</h6>
+                                    @if (existingRequest.comments) {
+                                        <p style="margin: 0 0 10px 0; font-size: 13px; font-style: italic;">
+                                            Reason: "{{ existingRequest.comments }}"
+                                        </p>
+                                    }
+                                    <p style="margin: 0; font-size: 12.5px; font-weight: 500;">
+                                        For any questions or appeals, please contact us on our <a routerLink="/contact" style="color: #1e0a3c; text-decoration: underline; font-weight: 700;">Contact Us</a> page.
+                                    </p>
+                                </div>
+                            }
+
+                            <!-- Approved Success Banner -->
+                            @if (existingRequest.status === 'Approved') {
+                                <div class="alert alert-success mb-4 p-3" style="background: #ecfdf5; border: 1px solid #d1fae5; border-radius: 8px; color: #065f46; text-align: left;">
+                                    <h6 style="margin: 0 0 5px 0; font-weight: 700; font-family: 'Outfit';"><i class="fa fa-check-circle"></i> Request Approved</h6>
+                                    <p style="margin: 0; font-size: 13px;">
+                                        Our logistics associate will contact you shortly to coordinate pick-up and exchange actions. Please keep items inside original packaging.
+                                    </p>
+                                </div>
+                            }
+
+                            <!-- Request Details Info -->
+                            <div class="row mb-4" style="row-gap: 20px;">
+                                <div class="col-md-6" style="text-align: left;">
+                                    <strong style="font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px;">Applied Reason</strong>
+                                    <span style="font-size: 14px; color: #111; font-weight: 600;">{{ existingRequest.reason }}</span>
+                                </div>
+
+                                @if (requestType === 'Return' && existingRequest.refundMethod) {
+                                    <div class="col-md-6" style="text-align: left;">
+                                        <strong style="font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px;">Refund Preference</strong>
+                                        <span style="font-size: 14px; color: #111; font-weight: 600; display: block;">{{ existingRequest.refundMethod }}</span>
+                                        @if (existingRequest.refundDetails) {
+                                            <span style="font-size: 12.5px; color: #555; font-family: monospace; display: block; margin-top: 3px; background: #f9f9f9; padding: 4px 8px; border-radius: 4px; border: 1px solid #eee;">
+                                                {{ existingRequest.refundDetails }}
+                                            </span>
+                                        }
+                                    </div>
+                                }
+
+                                @if (existingRequest.status !== 'Rejected' && existingRequest.comments) {
+                                    <div class="col-md-12" style="text-align: left; margin-top: 15px;">
+                                        <strong style="font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px;">Transaction Reference / Payout Log</strong>
+                                        <div style="font-size: 12.5px; color: #333; font-family: monospace; display: block; margin-top: 3px; background: #fafafa; border-left: 3px solid #1e0a3c; padding: 10px 15px; border-radius: 4px; border: 1px solid #eee; white-space: pre-wrap;">{{ existingRequest.comments }}</div>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Items List -->
+                            <div class="mb-4">
+                                <strong style="font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px; text-align: left;">Applied Item(s)</strong>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    @for (item of existingRequest.items; track item.productId) {
+                                        <div style="display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid #eee; border-radius: 8px;">
+                                            <img [src]="item.image" [alt]="item.name" style="width: 45px; height: 55px; object-fit: cover; border-radius: 4px; border: 1px solid #eaeaea;">
+                                            <div style="flex-grow: 1; text-align: left;">
+                                                <h6 style="margin: 0 0 3px 0; font-size: 13.5px; font-weight: 700; color: #111;">{{ item.name }}</h6>
+                                                <span style="font-size: 12.5px; color: #666;">
+                                                    Size: <strong>{{ item.size }}</strong> 
+                                                    @if (requestType === 'Exchange' && item.newSize) {
+                                                        ➔ New Size: <strong style="color: #0288d1;">{{ item.newSize }}</strong>
+                                                    } | 
+                                                    Color: <strong>{{ item.colorName }}</strong> | Qty: <strong>{{ item.quantity }}</strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Return/Exchange Milestone Tracker -->
+                            @if (existingRequest.status !== 'Rejected') {
+                                <div class="mb-4" style="border-top: 1.5px solid #eee; padding-top: 25px;">
+                                    <strong style="font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 20px; text-align: left; font-family: 'Outfit';">Logistics Tracker</strong>
+                                    
+                                    <div class="return-timeline" style="display: flex; flex-direction: column; gap: 20px; border-left: 2px solid #eaeaea; padding-left: 20px; margin-left: 10px; text-align: left;">
+                                        
+                                        <!-- Step 1: Request Initiated -->
+                                        <div class="rt-node" style="position: relative;">
+                                            <div class="rt-dot" style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #27ae60;"></div>
+                                            <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 13.5px; color: #111; font-family: 'Outfit';">{{ requestType }} Request Submitted</h6>
+                                            <span style="font-size: 11px; color: #888; display: block;">Request registered successfully. Pending administrator verification.</span>
+                                            <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Submitted') }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Step 2: Request Approved -->
+                                        <div class="rt-node" style="position: relative;">
+                                            <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached('Approved') ? '#27ae60' : '#ccc'}"
+                                                 style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                            <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 13.5px; color: #111; font-family: 'Outfit';">Request Approved</h6>
+                                            @if (isReturnMilestoneReached('Approved')) {
+                                                <span style="font-size: 11px; color: #888; display: block;">Administrator review complete. Request approved for processing.</span>
+                                                <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                    <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Approved') }}
+                                                </span>
+                                            } @else {
+                                                <span style="font-size: 11px; color: #bbb; font-style: italic;">Awaiting approval review.</span>
+                                            }
+                                        </div>
+
+                                        <!-- Step 3: Courier Pickup -->
+                                        <div class="rt-node" style="position: relative;">
+                                            <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached('Courier Pickup') ? '#27ae60' : '#ccc'}"
+                                                 style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                            <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 13.5px; color: #111; font-family: 'Outfit';">Courier Pickup</h6>
+                                            @if (isReturnMilestoneReached('Courier Pickup')) {
+                                                <span style="font-size: 11px; color: #888; display: block;">Courier executive assigned. Item pickup completed.</span>
+                                                <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                    <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Courier Pickup') }}
+                                                </span>
+                                            } @else {
+                                                <span style="font-size: 11px; color: #bbb; font-style: italic;">Awaiting courier agent assignment.</span>
+                                            }
+                                        </div>
+
+                                        <!-- Step 4: Quality Inspection -->
+                                        <div class="rt-node" style="position: relative;">
+                                            <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached('Inspection') ? '#27ae60' : '#ccc'}"
+                                                 style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                            <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 13.5px; color: #111; font-family: 'Outfit';">Inspection</h6>
+                                            @if (isReturnMilestoneReached('Inspection')) {
+                                                <span style="font-size: 11px; color: #888; display: block;">Items received at fulfillment center. Verification checks passed.</span>
+                                                <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                    <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Inspection') }}
+                                                </span>
+                                            } @else {
+                                                <span style="font-size: 11px; color: #bbb; font-style: italic;">Awaiting delivery validation.</span>
+                                            }
+                                        </div>
+
+                                        <!-- Step 5: Completed -->
+                                        <div class="rt-node" style="position: relative; padding-bottom: 10px;">
+                                            <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached(requestType === 'Return' ? 'Refund Processed' : 'Replacement Dispatched') ? '#27ae60' : '#ccc'}"
+                                                 style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                            <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 13.5px; color: #111; font-family: 'Outfit';">
+                                                @if (requestType === 'Return' && isOnlinePayment()) {
+                                                    Refund Successfully
+                                                } @else {
+                                                    {{ requestType === 'Return' ? 'Refund Processed' : 'Replacement Dispatched' }}
+                                                }
+                                            </h6>
+                                            @if (isReturnMilestoneReached(requestType === 'Return' ? 'Refund Processed' : 'Replacement Dispatched')) {
+                                                @if (requestType === 'Return' && isOnlinePayment() && getRefundTransactionId()) {
+                                                    <span style="font-size: 11px; color: #888; display: block;">
+                                                        Refunded automatically via Cashfree. 
+                                                        Reference Transaction ID: <strong style="font-family: monospace; color: #1e0a3c; font-size: 11.5px; background: #f4f0ff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e1d4ff; display: inline-block; margin-top: 2px;">{{ getRefundTransactionId() }}</strong>
+                                                    </span>
+                                                } @else {
+                                                    <span style="font-size: 11px; color: #888; display: block;">Logistics cycle closed. Transaction execution completed successfully.</span>
+                                                }
+                                                <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                    <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate(requestType === 'Return' ? 'Refund Processed' : 'Replacement Dispatched') }}
+                                                </span>
+                                            } @else {
+                                                <span style="font-size: 11px; color: #bbb; font-style: italic;">Pending final quality validation.</span>
+                                            }
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+
+                            <!-- Back Button -->
+                            <div style="text-align: center; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+                                <a routerLink="/account/orders" class="btn-cancel-req"
+                                   style="width: 180px; height: 44px; background: #1e0a3c; color: #ffffff; font-weight: 700; font-size: 13.5px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; border: none; cursor: pointer;">
+                                    Back to Orders
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</section>
+<!-- Return / Exchange Content End -->

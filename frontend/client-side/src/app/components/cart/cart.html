@@ -1,0 +1,191 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Shopping Cart</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <a routerLink="/shop">Shop</a>
+                        <span>Shopping Cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Shopping Cart Section Begin -->
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="shopping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of cartItems; track item.key) {
+                            <tr>
+                                <td class="product__cart__item">
+                                    <div class="product__cart__item__pic">
+                                        <img [src]="item.image" alt=""
+                                            style="width: 90px; height: 90px; object-fit: cover; border-radius: 4px;">
+                                    </div>
+                                    <div class="product__cart__item__text">
+                                        <h6>{{ item.name }} ({{ item.size }} / {{ item.colorName }})</h6>
+                                        <h5>₹{{ item.price.toFixed(2) }}</h5>
+                                        <button type="button" class="cart__edit__btn" (click)="openEditModal(item)">
+                                            <i class="fa fa-pencil"></i> Edit Size/Color
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="quantity__item">
+                                    <div class="quantity">
+                                        <div class="pro-qty-2">
+                                            <span class="fa fa-angle-left dec qtybtn"
+                                                (click)="decrementQuantity(item)"></span>
+                                            <input type="text" [value]="item.quantity" readonly>
+                                            <span class="fa fa-angle-right inc qtybtn"
+                                                (click)="incrementQuantity(item)"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="cart__price">₹ {{ (item.price * item.quantity).toFixed(2) }}</td>
+                                <td class="cart__close" (click)="removeItem(item)"><mat-icon
+                                        class="cart-remove-icon">delete</mat-icon></td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <h5>Your cart is empty!</h5>
+                                    <a routerLink="/shop" class="primary-btn mt-3 d-inline-block">Shop Now</a>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="continue__btn">
+                            <a routerLink="/shop">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cart__discount">
+                    <h6>Discount codes</h6>
+                    <form (submit)="applyCartCoupon()">
+                        <input type="text" [(ngModel)]="couponInput" name="couponInput" placeholder="Try: FIRSTBUY">
+                        <button type="submit">Apply</button>
+                    </form>
+                    @if (appliedCoupon) {
+                    <div class="cart__coupon-status-applied"
+                        style="margin-top: 12px; font-size: 13px; font-weight: 600; color: #16a34a; display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fa fa-check-circle"></i> Coupon "<strong>{{ appliedCoupon }}</strong>"
+                            active</span>
+                        <button type="button" (click)="removeCartCoupon()"
+                            style="background: none; border: none; font-size: 11px; font-weight: 700; color: #dc2626; text-transform: uppercase; cursor: pointer;">Remove</button>
+                    </div>
+                    }
+                </div>
+                <div class="cart__total_modern">
+                    <h5 class="cart-total-title">Price Details</h5>
+                    <ul class="cart-total-list">
+                        <li>Total MRP (Subtotal) <span>₹ {{ subtotal.toFixed(2) }}</span></li>
+                        @if (discount > 0) {
+                        <li class="cart-discount-row">Coupon Discount <span>- ₹ {{ discount.toFixed(2) }}</span></li>
+                        }
+                        <li>Delivery Charges <span class="free-delivery-badge">FREE</span></li>
+                    </ul>
+                    <div class="cart-total-payable">
+                        Total Amount <span>₹ {{ total.toFixed(2) }}</span>
+                    </div>
+                    <a routerLink="/checkout" class="btn-checkout-proceed">Proceed to checkout</a>
+                    <p class="cart-checkout-badge"><i class="fa fa-lock"></i> 100% Safe &amp; Secure Payments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Shopping Cart Section End -->
+
+<!-- ===================== EDIT VARIANT MODAL ===================== -->
+@if (showEditModal && editingItem) {
+<div class="em-backdrop" (click)="closeEditModal()">
+    <div class="em-modal" (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="em-header">
+            <div class="em-header-left">
+                <i class="fa fa-pencil-square-o"></i>
+                <span>Edit Size &amp; Color</span>
+            </div>
+            <button type="button" class="em-close-btn" (click)="closeEditModal()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        @if (!editingProduct) {
+            <div class="em-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 180px; gap: 12px;">
+                <div class="em-loader-spinner"></div>
+                <span style="font-size: 13px; color: #666; font-weight: 500;">Loading options...</span>
+            </div>
+        } @else {
+            <div class="em-content">
+                <!-- Product Brief -->
+                <div class="em-product-brief">
+                    <img [src]="tempSelectedColorImage || editingProduct.image" alt="">
+                    <div>
+                        <h5>{{ editingProduct.name }}</h5>
+                        <p class="em-price">₹{{ editingItemPrice.toFixed(2) }}</p>
+                    </div>
+                </div>
+
+                <!-- Color Option -->
+                <div class="em-option-group">
+                    <div class="em-option-label">Select Color: <strong>{{ tempSelectedColorName }}</strong></div>
+                    <div class="em-color-list">
+                        @for (color of editingProduct.colors; track color.name) {
+                        <label class="em-color-swatch" [class.em-color-active]="tempSelectedColorClass === color.class"
+                            [style.background-color]="color.hex" [title]="color.name" (click)="selectTempColor(color)">
+                            <input type="radio" style="display:none;">
+                        </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Size Option -->
+                <div class="em-option-group">
+                    <div class="em-option-label">Select Size: <strong>{{ tempSelectedSize }}</strong></div>
+                    <div class="em-size-list">
+                        @for (size of editingProduct.sizes; track size) {
+                        <button type="button" class="em-size-btn" [class.em-size-active]="tempSelectedSize === size"
+                            (click)="selectTempSize(size)">
+                            {{ size }}
+                        </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="em-footer">
+                <button type="button" class="em-btn-cancel" (click)="closeEditModal()">Cancel</button>
+                <button type="button" class="em-btn-save" (click)="saveItemChanges()">Save Changes</button>
+            </div>
+        }
+
+    </div>
+</div>
+}

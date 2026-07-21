@@ -1,0 +1,764 @@
+@if (product) {
+<!-- Shop Details Section Begin -->
+<section class="sd-page">
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Shop Details</h4>
+                        <div class="breadcrumb__links">
+                            <a routerLink="/">Home</a>
+                            <a routerLink="/shop">Shop</a>
+                            <span>{{ product.name }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="sd-layout">
+
+            <!-- LEFT: Premium Gallery Card -->
+            <div class="sd-gallery-card">
+                <div class="sd-images-col">
+                    <!-- Thumbnail Strip -->
+                    <div class="sd-thumb-strip">
+                        @for (img of activeColorImages; track img) {
+                        <div class="sd-thumb" [class.sd-thumb-active]="activeImage === img" (click)="selectImage(img)">
+                            <img [src]="getImg(img)" [alt]="product.name">
+                        </div>
+                        }
+                    </div>
+                    <!-- Main Large Image -->
+                    <div class="sd-main-image">
+                        <img [src]="getImg(activeImage)" [alt]="product.name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Product Info (Sticky) -->
+            <div class="sd-info-col">
+                <div class="sd-info-sticky">
+
+                    <!-- Category Badge -->
+                    <div class="sd-category-badge">{{ product.category }}</div>
+
+                    <!-- Product Name -->
+                    <h1 class="sd-product-name">{{ product.name }}</h1>
+
+                    <div class="sd-rating-row">
+                        @for (star of [1,2,3,4,5]; track star) {
+                            @if (star <= averageRating) { 
+                                <i class="fa fa-star sd-star"></i>
+                            } @else {
+                                <i class="fa fa-star-o sd-star sd-star-empty"></i>
+                            }
+                        }
+                        <span class="sd-rating-text">{{ averageRating ? averageRating.toFixed(1) : '0.0' }} / 5.0 ({{ reviews.length }} reviews)</span>
+                    </div>
+
+                    <!-- Price Row -->
+                    <div class="sd-price-row">
+                        <span class="sd-sale-price">₹{{ currentPrice.price.toFixed(2) }}</span>
+                        @if (currentPrice.originalPrice) {
+                        <span class="sd-mrp">MRP <s>₹{{ currentPrice.originalPrice.toFixed(2) }}</s></span>
+                        }
+                        @if (currentPrice.discount) {
+                        <span class="sd-discount-badge">{{ currentPrice.discount }}% OFF</span>
+                        }
+                    </div>
+                    <p class="sd-tax-note">Inclusive of all taxes. Free delivery.</p>
+
+                    <!-- Offers Box -->
+                    @if (product.offers && product.offers.length > 0) {
+                    <div class="sd-offers-box">
+                        <div class="sd-offers-title">
+                            <i class="fa fa-tag"></i>
+                            <span>Available Offers</span>
+                        </div>
+                        <ul class="sd-offers-list">
+                            @for (offer of product.offers; track offer) {
+                            <li><i class="fa fa-check-circle"></i> {{ offer }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    <!-- Color Selector -->
+                    <div class="sd-option-group">
+                        <div class="sd-option-label">
+                            Color: <strong>{{ getSelectedColorName() }}</strong>
+                        </div>
+                        <div class="sd-color-list">
+                            @for (color of product.colors; track color.name) {
+                            <label class="sd-color-swatch" [class.sd-color-active]="selectedColorName === color.name"
+                                [style.background-color]="color.hex" [title]="color.name" (click)="selectColor(color)">
+                                <input type="radio" style="display:none;">
+                                @if (selectedColorName === color.name) {
+                                    <i class="fa fa-check swatch-check"></i>
+                                }
+                            </label>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Size Selector -->
+                    <div class="sd-option-group">
+                        <div class="sd-size-label-row">
+                            <div class="sd-option-label">Size: <strong>{{ selectedSize }}</strong></div>
+                            <button type="button" class="sd-size-guide-btn" (click)="openSizeGuide()">
+                                <i class="fa fa-expand"></i> Size Guide
+                            </button>
+                        </div>
+                        <div class="sd-size-list">
+                            @for (size of product.sizes; track size) {
+                            <button type="button" class="sd-size-btn" [class.sd-size-active]="selectedSize === size"
+                                (click)="selectSize(size)">
+                                {{ size }}
+                            </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Stock Status Alert -->
+                    @if (selectedSize) {
+                        <div class="sd-stock-alert" style="margin-top: 10px; font-size: 13px; font-weight: 600; text-align: left;">
+                            @if (getVariantStock() <= 0) {
+                                <span style="color: #dc3545; display: inline-flex; align-items: center; gap: 5px;">
+                                    <i class="fa fa-times-circle"></i> Out of stock (selected size/color variant is unavailable)
+                                </span>
+                            } @else if (getVariantStock() <= 3) {
+                                <span style="color: #fd7e14; display: inline-flex; align-items: center; gap: 5px;">
+                                    <i class="fa fa-exclamation-circle"></i> Hurry! Only {{ getVariantStock() }} items left in stock.
+                                </span>
+                            } @else {
+                                <span style="color: #28a745; display: inline-flex; align-items: center; gap: 5px;">
+                                    <i class="fa fa-check-circle"></i> In Stock (ready to ship)
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    <!-- Quantity -->
+                    <div class="sd-option-group">
+                        <div class="sd-option-label">Quantity:</div>
+                        <div class="sd-qty-box">
+                            <button type="button" class="sd-qty-btn" (click)="decrementQuantity()"
+                                [disabled]="quantity <= 1 || getVariantStock() <= 0">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <span class="sd-qty-val">{{ quantity }}</span>
+                            <button type="button" class="sd-qty-btn" (click)="incrementQuantity()"
+                                [disabled]="getVariantStock() <= 0">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="sd-action-btns">
+                        <a href="javascript:void(0)" (click)="addToCart()" class="sd-btn-cart" [class.disabled-btn]="getVariantStock() <= 0" [style.pointer-events]="getVariantStock() <= 0 ? 'none' : 'auto'" [style.opacity]="getVariantStock() <= 0 ? '0.5' : '1'">
+                            <i class="fa fa-shopping-bag"></i> Add to Cart
+                        </a>
+                        <a href="javascript:void(0)" (click)="buyNow()" class="sd-btn-buy" [class.disabled-btn]="getVariantStock() <= 0" [style.pointer-events]="getVariantStock() <= 0 ? 'none' : 'auto'" [style.opacity]="getVariantStock() <= 0 ? '0.5' : '1'">
+                            <i class="fa fa-bolt" style="margin-right: 6px;"></i> Buy Now
+                        </a>
+                        <button type="button" class="sd-btn-wishlist" [class.in-wishlist]="isInWishlist()"
+                            (click)="toggleWishlist()" title="Save to Wishlist">
+                            <i class="fa" [class.fa-heart]="isInWishlist()" [class.fa-heart-o]="!isInWishlist()"></i>
+                        </button>
+                    </div>
+
+                    @if (sizeError) {
+                    <div class="sd-size-error-msg">
+                        <i class="fa fa-exclamation-triangle"></i> {{ sizeError }}
+                    </div>
+                    }
+
+
+                    <!-- Divider -->
+                    <hr class="sd-divider">
+
+                    <!-- Meta Info -->
+                    <ul class="sd-meta-list">
+                        <li><span class="sd-meta-key">SKU:</span> {{ product.sku }}</li>
+                        <li><span class="sd-meta-key">Category:</span> {{ product.category }}</li>
+                        <li><span class="sd-meta-key">Tags:</span> {{ product.category }}, Fashion, Men</li>
+                    </ul>
+
+                    <!-- Share Options -->
+                    <div class="product__details__share">
+                        <span class="share-title">Share:</span>
+                        <div class="share-buttons">
+                            <a href="javascript:void(0)" class="share-btn facebook" (click)="shareProduct('facebook')"
+                                title="Share on Facebook">
+                                <i class="fa fa-facebook"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="share-btn twitter" (click)="shareProduct('twitter')"
+                                title="Share on X (Twitter)">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="display: block;">
+                                    <path
+                                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a href="javascript:void(0)" class="share-btn instagram" (click)="shareProduct('instagram')"
+                                title="Share on Instagram">
+                                <i class="fa fa-instagram"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="share-btn whatsapp" (click)="shareProduct('whatsapp')"
+                                title="Share on WhatsApp">
+                                <i class="fa fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Safe Checkout -->
+                    <div class="sd-safe-checkout">
+                        <i class="fa fa-lock"></i> Guaranteed Safe Checkout
+                    </div>
+
+                    <!-- Delivery & Return Icon Strip -->
+                    <div class="sd-service-strip">
+                        <div class="sd-service-item">
+                            <i class="fa fa-truck"></i>
+                            <div>
+                                <strong>Free Delivery</strong>
+                                <span>On orders above ₹999</span>
+                            </div>
+                        </div>
+                        <div class="sd-service-item">
+                            <i class="fa fa-refresh"></i>
+                            <div>
+                                <strong>7 Day Exchange Only</strong>
+                                <span>No returns, size exchange only</span>
+                            </div>
+                        </div>
+                        <div class="sd-service-item">
+                            <i class="fa fa-shield"></i>
+                            <div>
+                                <strong>Genuine Product</strong>
+                                <span>100% authentic brands</span>
+                            </div>
+                        </div>
+                        <div class="sd-service-item">
+                            <i class="fa fa-credit-card"></i>
+                            <div>
+                                <strong>Secure Payment</strong>
+                                <span>SSL encrypted checkout</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div><!-- /.sd-layout -->
+
+        <!-- Description Tab -->
+        <div class="sd-description-section">
+            <div class="sd-desc-header">Product Description</div>
+            <div class="sd-desc-body">
+                <p>{{ product.description }}</p>
+                <p class="sd-desc-extra">
+                    This premium <strong>{{ product.name }}</strong> is cataloged under
+                    <strong>{{ product.category }}</strong> and is constructed with top tier materials
+                    to guarantee style, comfort, and longevity. Perfect for daily styling or active fashion setups.
+                </p>
+            </div>
+        </div>
+
+        <!-- ===== ACCORDION DETAILS SECTION ===== -->
+        <!-- ===== ACCORDION DETAILS SECTION (Angular Material) ===== -->
+        <mat-accordion class="sd-material-accordion" multi="false">
+
+            <!-- 1. Product Highlights -->
+            <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-star-o" style="margin-right: 10px;"></i> Product Highlights
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sd-acc-body-content">
+                    <ul class="sd-highlights-list">
+                        <li><i class="fa fa-check"></i> Premium quality fabric — soft, breathable &amp; durable</li>
+                        <li><i class="fa fa-check"></i> Regular fit — comfortable for all-day wear</li>
+                        <li><i class="fa fa-check"></i> Suitable for casual &amp; semi-formal occasions</li>
+                        <li><i class="fa fa-check"></i> Reinforced stitching for long-lasting wear</li>
+                        <li><i class="fa fa-check"></i> Color stays vibrant even after multiple washes</li>
+                        <li><i class="fa fa-check"></i> Pre-shrunk fabric — maintains shape &amp; size</li>
+                    </ul>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- 2. Exchange Policy -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-exchange" style="margin-right: 10px;"></i> Exchange Policy
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sd-acc-body-content">
+                    <!-- No Return Notice -->
+                    <div class="sd-no-return-banner">
+                        <i class="fa fa-ban"></i>
+                        <div>
+                            <strong>Returns Not Available</strong>
+                            <span>This product is not eligible for return. Please check size carefully before
+                                ordering.</span>
+                        </div>
+                    </div>
+                    <div class="sd-policy-grid sd-policy-grid-2">
+                        <div class="sd-policy-card sd-policy-blue">
+                            <i class="fa fa-exchange"></i>
+                            <strong>7-Day Size Exchange</strong>
+                            <p>Wrong size? Exchange once for free within 7 days of delivery. No questions asked.</p>
+                        </div>
+                        <div class="sd-policy-card sd-policy-orange">
+                            <i class="fa fa-tag"></i>
+                            <strong>Exchange Conditions</strong>
+                            <p>Item must be unused, unwashed and with original tags attached to be eligible for
+                                exchange.</p>
+                        </div>
+                    </div>
+                    <div class="sd-policy-note">
+                        <i class="fa fa-info-circle"></i>
+                        <span><strong>Note:</strong> Returns are strictly not accepted. Only size exchange is allowed
+                            within 7 days. Sale &amp; discounted items are not eligible for exchange.</span>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- 3. Delivery Information -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-truck" style="margin-right: 10px;"></i> Delivery Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sd-acc-body-content">
+                    <table class="sd-delivery-table">
+                        <thead>
+                            <tr>
+                                <th>Delivery Type</th>
+                                <th>Estimated Time</th>
+                                <th>Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="fa fa-truck"></i> Standard Delivery</td>
+                                <td>5–7 Business Days</td>
+                                <td class="sd-free">FREE above ₹999</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-bolt"></i> Express Delivery</td>
+                                <td>2–3 Business Days</td>
+                                <td>₹99</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-flash"></i> Same Day Delivery</td>
+                                <td>Within 24 Hours</td>
+                                <td>₹199 (Select cities)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="sd-delivery-note"><i class="fa fa-map-marker"></i> Available in 19,000+ pincodes across
+                        India. Enter your pincode at checkout to confirm availability.</p>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- 4. Care Instructions -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-tint" style="margin-right: 10px;"></i> Care Instructions
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sd-acc-body-content">
+                    <div class="sd-care-grid">
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">🧺</div>
+                            <strong>Machine Wash</strong>
+                            <p>Cold water, gentle cycle only</p>
+                        </div>
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">🚫</div>
+                            <strong>Do Not Bleach</strong>
+                            <p>Avoid bleach &amp; harsh chemicals</p>
+                        </div>
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">🌡️</div>
+                            <strong>Tumble Dry Low</strong>
+                            <p>Low heat setting only</p>
+                        </div>
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">♨️</div>
+                            <strong>Iron Medium</strong>
+                            <p>Medium heat, inside out</p>
+                        </div>
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">🧴</div>
+                            <strong>Mild Detergent</strong>
+                            <p>Use mild detergent only</p>
+                        </div>
+                        <div class="sd-care-item">
+                            <div class="sd-care-icon">🌿</div>
+                            <strong>Dry in Shade</strong>
+                            <p>Avoid direct sunlight</p>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- 5. Seller Information -->
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <i class="fa fa-building" style="margin-right: 10px;"></i> Seller Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="sd-acc-body-content">
+                    <div class="sd-seller-info">
+                        <div class="sd-seller-row">
+                            <span class="sd-seller-label">Sold by</span>
+                            <span class="sd-seller-val sd-seller-name"><i class="fa fa-store"></i> RK Fashion</span>
+                        </div>
+                        <div class="sd-seller-row">
+                            <span class="sd-seller-label">Rating</span>
+                            <span class="sd-seller-val">
+                                <i class="fa fa-star" style="color:#f7941d"></i>
+                                <i class="fa fa-star" style="color:#f7941d"></i>
+                                <i class="fa fa-star" style="color:#f7941d"></i>
+                                <i class="fa fa-star" style="color:#f7941d"></i>
+                                <i class="fa fa-star-half-o" style="color:#f7941d"></i>
+                                <strong>4.6</strong> / 5.0
+                            </span>
+                        </div>
+                        <div class="sd-seller-row">
+                            <span class="sd-seller-label">Ships from</span>
+                            <span class="sd-seller-val"><i class="fa fa-map-marker"></i> Surat, Gujarat</span>
+                        </div>
+                        <div class="sd-seller-row">
+                            <span class="sd-seller-label">GST Included</span>
+                            <span class="sd-seller-val sd-gst-badge"><i class="fa fa-check-circle"></i> Yes — GST
+                                Invoice Available</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+
+        </mat-accordion><!-- /.sd-accordion-section -->
+
+    </div><!-- /.container -->
+</section>
+<!-- Shop Details Section End -->
+
+<!-- ===================== REVIEWS SECTION BEGIN ===================== -->
+<section class="rv-section">
+  <div class="container">
+
+    <!-- Section Header -->
+    <div class="rv-header">
+      <h3 class="rv-title">Customer Reviews</h3>
+      <span class="rv-count">({{ reviews.length }} reviews)</span>
+    </div>
+
+    <!-- Rating Summary Bar -->
+    <div class="rv-summary">
+      <div class="rv-avg-block">
+        <span class="rv-avg-num">{{ avgRating }}</span>
+        <div class="rv-avg-stars">
+          @for (s of [1,2,3,4,5]; track s) {
+            @if (s <= avgRating) {
+              <i class="fa fa-star rv-star rv-star-filled"></i>
+            } @else {
+              <i class="fa fa-star-o rv-star rv-star-empty"></i>
+            }
+          }
+        </div>
+        <span class="rv-avg-label">out of 5</span>
+      </div>
+      <!-- Rating Bars -->
+      <div class="rv-bars">
+        @for (n of [5,4,3,2,1]; track n) {
+          <div class="rv-bar-row">
+            <span class="rv-bar-label">{{ n }} <i class="fa fa-star" style="font-size:10px;color:#f7941d;"></i></span>
+            <div class="rv-bar-track">
+              <div class="rv-bar-fill" [style.width.%]="reviews.length ? countByStar(n) / reviews.length * 100 : 0"></div>
+            </div>
+            <span class="rv-bar-count">{{ countByStar(n) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <hr class="rv-divider">
+
+    <!-- Individual Reviews List -->
+    <div class="rv-list">
+      @for (review of reviews; track review.id) {
+        <div class="rv-item">
+          <div class="rv-item-header">
+            <div class="rv-avatar">{{ review.name.charAt(0).toUpperCase() }}</div>
+            <div class="rv-meta">
+              <strong class="rv-user-name">{{ review.name }}</strong>
+              <span class="rv-date">{{ review.date }}</span>
+            </div>
+            <div class="rv-stars-display">
+              @for (s of [1,2,3,4,5]; track s) {
+                @if (s <= review.rating) {
+                  <i class="fa fa-star rv-star rv-star-filled"></i>
+                } @else {
+                  <i class="fa fa-star-o rv-star rv-star-empty"></i>
+                }
+              }
+            </div>
+          </div>
+          <p class="rv-text">{{ review.text }}</p>
+          <!-- Review Photos Gallery -->
+          @if (review.photos && review.photos.length > 0) {
+            <div class="rv-photos-strip" style="display: flex; gap: 8px; margin: 12px 0 8px 0; flex-wrap: wrap;">
+              @for (photo of review.photos; track photo) {
+                <div class="rv-photo-thumbnail" 
+                     (click)="openReviewPhotoModal(photo)"
+                     style="width: 70px; height: 70px; border-radius: 4px; border: 1px solid #ddd; overflow: hidden; cursor: zoom-in; transition: transform 0.2s;">
+                  <img [src]="getImg(photo)" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+              }
+            </div>
+          }
+          <button class="rv-helpful-btn" 
+            [class.marked]="isReviewMarkedHelpful(review)"
+            [disabled]="isReviewMarkedHelpful(review)"
+            (click)="markHelpful(review)">
+            <i class="fa fa-thumbs-o-up"></i> Helpful ({{ review.helpful }})
+          </button>
+        </div>
+      }
+      @if (reviews.length === 0) {
+        <div class="rv-empty">
+          <i class="fa fa-comments-o"></i>
+          <p>No reviews yet. Be the first to write one!</p>
+        </div>
+      }
+    </div>
+
+
+
+  </div>
+</section>
+<!-- ===================== REVIEWS SECTION END ===================== -->
+
+<!-- Recently Viewed Section Begin (replaces Related) -->
+@if (relatedProducts.length > 0) {
+<section class="related spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="related-title">RECENTLY VIEWED PRODUCTS</h3>
+            </div>
+        </div>
+        <div class="row">
+            @for (item of relatedProducts; track item.id) {
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 mb-4">
+                <div class="new-product-card">
+                    <div class="new-product-card-top" [routerLink]="['/shop-details', item.id]">
+                        <img [src]="getImg(item.image)" class="new-product-img" [alt]="item.name">
+                        @if (item.discountPercent) {
+                            <span class="new-product-badge">{{ item.discountPercent }}% OFF</span>
+                        } @else if (item.label) {
+                            <span class="new-product-badge">{{ item.label }}</span>
+                        }
+                        <button class="heart-btn" [class.active]="isInWishlistId(item.id)" (click)="toggleRelatedWishlist(item, $event)">
+                            <i class="fa" [class.fa-heart]="isInWishlistId(item.id)" [class.fa-heart-o]="!isInWishlistId(item.id)"></i>
+                        </button>
+                    </div>
+                    <div class="new-product-card-bottom">
+                        <h3 class="new-product-title" [routerLink]="['/shop-details', item.id]">{{ item.name }}</h3>
+                        <div class="new-product-qty-price">
+                            <span class="new-product-price">₹{{ item.price.toLocaleString() }}
+                                @if (item.originalPrice) {
+                                    <span class="old-price">₹{{ item.originalPrice.toLocaleString() }}</span>
+                                }
+                            </span>
+                        </div>
+
+                        <div class="new-product-colors">
+                            <span class="color-label">COLOR:</span>
+                            @for (color of item.colors.slice(0, 5); track color.name) {
+                                <span class="color-dot" [style.background-color]="color.hex" [attr.data-tooltip]="color.name"></span>
+                            }
+                        </div>
+                        <div class="new-product-actions">
+                            <button class="add-to-cart-btn" (click)="addRelatedToCart(item, $event)">ADD TO CART</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+}
+<!-- Related Section End -->
+
+} @else {
+<section class="shop-details spad" style="margin-top: 100px;">
+    <div class="container text-center py-5">
+        <h2>Product Not Found</h2>
+        <p style="margin: 20px 0;">The item you are looking for is not available or might have been removed.</p>
+        <a routerLink="/shop" class="site-btn" style="color: #ffffff;">Back to Shop</a>
+    </div>
+</section>
+}
+
+<!-- ===================== SIZE GUIDE MODAL ===================== -->
+@if (showSizeGuide) {
+<div class="sg-backdrop" (click)="closeSizeGuide()">
+    <div class="sg-modal" (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="sg-header">
+            <div class="sg-header-left">
+                <i class="fa fa-arrows-alt"></i>
+                <span>Size Guide</span>
+            </div>
+            <button type="button" class="sg-close-btn" (click)="closeSizeGuide()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <!-- How to Measure Tip -->
+        <div class="sg-tip">
+            <i class="fa fa-info-circle"></i>
+            <span>Measurements are in <strong>inches</strong>. For best fit, measure over your innerwear.</span>
+        </div>
+
+        <!-- TOPS Chart -->
+        @if (!isBottoms) {
+        <div class="sg-chart-title">Tops &amp; Shirts Size Chart</div>
+        <div class="sg-table-wrap">
+            <table class="sg-table">
+                <thead>
+                    <tr>
+                        <th>Size</th>
+                        <th>Chest</th>
+                        <th>Waist</th>
+                        <th>Shoulder</th>
+                        <th>Length</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of topsSizeChart; track row.size) {
+                    <tr [class.sg-row-highlight]="selectedSize === row.size">
+                        <td class="sg-size-cell" [class.sg-selected-size]="selectedSize === row.size"
+                            (click)="selectSize(row.size); closeSizeGuide()">
+                            {{ row.size }}
+                            @if (selectedSize === row.size) {
+                            <span class="sg-selected-tag">Selected</span>
+                            }
+                        </td>
+                        <td>{{ row.chest }}</td>
+                        <td>{{ row.waist }}</td>
+                        <td>{{ row.shoulder }}</td>
+                        <td>{{ row.length }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+        <!-- BOTTOMS Chart -->
+        @if (isBottoms) {
+        <div class="sg-chart-title">Bottoms &amp; Jeans Size Chart</div>
+        <div class="sg-table-wrap">
+            <table class="sg-table">
+                <thead>
+                    <tr>
+                        <th>Waist Size</th>
+                        <th>Waist</th>
+                        <th>Hip</th>
+                        <th>Inseam</th>
+                        <th>Thigh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of bottomsSizeChart; track row.size) {
+                    <tr [class.sg-row-highlight]="selectedSize === row.size">
+                        <td class="sg-size-cell" [class.sg-selected-size]="selectedSize === row.size"
+                            (click)="selectSize(row.size); closeSizeGuide()">
+                            {{ row.size }}
+                            @if (selectedSize === row.size) {
+                            <span class="sg-selected-tag">Selected</span>
+                            }
+                        </td>
+                        <td>{{ row.waist }}</td>
+                        <td>{{ row.hip }}</td>
+                        <td>{{ row.inseam }}</td>
+                        <td>{{ row.thigh }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+        <!-- How to measure illustration text -->
+        <div class="sg-measure-guide">
+            <div class="sg-measure-title">How to Measure</div>
+            <div class="sg-measure-grid">
+                <div class="sg-measure-item">
+                    <i class="fa fa-dot-circle-o"></i>
+                    <div>
+                        <strong>Chest</strong>
+                        <p>Measure around the fullest part of your chest, keeping tape horizontal.</p>
+                    </div>
+                </div>
+                <div class="sg-measure-item">
+                    <i class="fa fa-dot-circle-o"></i>
+                    <div>
+                        <strong>Waist</strong>
+                        <p>Measure around your natural waistline, keeping tape comfortably loose.</p>
+                    </div>
+                </div>
+                <div class="sg-measure-item">
+                    <i class="fa fa-dot-circle-o"></i>
+                    <div>
+                        <strong>Hip</strong>
+                        <p>Stand with feet together and measure around the fullest part of hips.</p>
+                    </div>
+                </div>
+                <div class="sg-measure-item">
+                    <i class="fa fa-dot-circle-o"></i>
+                    <div>
+                        <strong>Inseam</strong>
+                        <p>Measure from the crotch seam down to your ankle along the inside of leg.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+}
+<!-- ===================== SIZE GUIDE MODAL END ===================== -->
+
+<!-- ===================== REVIEW PHOTO LIGHTBOX MODAL ===================== -->
+@if (showReviewPhotoModal) {
+<div class="sg-backdrop" (click)="closeReviewPhotoModal()" style="display: flex; align-items: center; justify-content: center; z-index: 11000; background: rgba(0,0,0,0.85);">
+    <div class="sg-modal" (click)="$event.stopPropagation()" style="max-width: 600px; width: 95%; background: transparent; box-shadow: none; border: none; text-align: center; position: relative;">
+        <!-- Close Button -->
+        <button type="button" (click)="closeReviewPhotoModal()" style="position: absolute; right: 10px; top: -45px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer;">
+            <i class="fa fa-times"></i>
+        </button>
+        <!-- Large Image -->
+        <img [src]="getImg(activeReviewPhotoUrl)" style="max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); object-fit: contain; border: 3px solid #fff;">
+    </div>
+</div>
+}

@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+/* ───────────────────────────────────────────────
+   FOOTER V2 — Dark Olive Green Theme
+   Inspired by reference Flamingo Estate design
+─────────────────────────────────────────────── */
+
+$olive: #1e0a3c; // Deep purple background (dark)
+$olive-dark: #160729; // Darker purple for bottom bar
+$olive-border: rgba(255, 255, 255, 0.1);
+$text-muted: rgba(255, 255, 255, 0.55);
+$text-main: rgba(255, 255, 255, 0.85);
+$text-bright: #ffffff;
+$accent: rgba(160, 90, 255, 0.3);
+
+.footer-v2 {
+    background: $olive;
+    color: $text-main;
+    font-family: 'Nunito Sans', sans-serif;
+    padding: 0;
+}
+
+/* ── MAIN COLUMNS SECTION ── */
+.fv2-main {
+    padding: 70px 0 55px;
+    border-bottom: 1px solid $olive-border;
+
+    @media (max-width: 767px) {
+        padding: 50px 0 35px;
+    }
+}
+
+.fv2-col {
+    margin-bottom: 35px;
+}
+
+.fv2-heading {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $text-bright;
+    margin-bottom: 22px;
+    position: relative;
+
+    &::after {
+        content: '';
+        display: block;
+        width: 22px;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.3);
+        margin-top: 8px;
+    }
+}
+
+/* Navigation Link Lists */
+.fv2-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        margin-bottom: 10px;
+
+        a {
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 13px;
+            color: $text-muted;
+            text-decoration: none;
+            transition: color 0.2s ease, letter-spacing 0.2s ease;
+            display: inline-block;
+            line-height: 1.5;
+
+            &:hover {
+                color: $text-bright;
+                letter-spacing: 0.3px;
+            }
+        }
+    }
+}
+
+/* ── NEWSLETTER COLUMN ── */
+.fv2-newsletter-desc {
+    font-size: 12.5px;
+    color: $text-muted;
+    line-height: 1.55;
+    margin-bottom: 22px;
+    max-width: 280px;
+
+    @media (max-width: 767px) {
+        max-width: 100%;
+        text-align: center;
+    }
+}
+
+/* Inline email form matching reference design */
+.fv2-form {
+    margin-bottom: 30px;
+    max-width: 320px;
+
+    @media (max-width: 767px) {
+        max-width: 100%;
+    }
+}
+
+.fv2-form-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $text-muted;
+    margin-bottom: 8px;
+}
+
+.fv2-form-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    padding-bottom: 8px;
+    transition: border-color 0.3s ease;
+
+    &:focus-within {
+        border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 13px;
+        color: $text-bright;
+        padding: 0;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    button {
+        background: transparent;
+        border: none;
+        color: $text-bright;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        outline: none;
+        padding: 0 0 0 12px;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+}
+
+/* ── SOCIAL ICONS ROW ── */
+.fv2-social-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+
+    @media (max-width: 767px) {
+        justify-content: center;
+        margin-top: 8px;
+    }
+}
+
+.fv2-social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: $text-muted;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.25s ease;
+
+    svg {
+        transition: fill 0.25s;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.6);
+        color: $text-bright;
+        transform: translateY(-2px);
+
+        svg {
+            fill: $text-bright;
+        }
+    }
+}
+
+/* ── PAYMENT METHODS ROW ── */
+.fv2-payment-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    @media (max-width: 767px) {
+        justify-content: center;
+    }
+}
+
+.fv2-pay-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 20px;
+    cursor: default;
+    transition: color 0.2s ease, opacity 0.2s;
+
+    svg {
+        fill: rgba(255, 255, 255, 0.4);
+        transition: fill 0.2s ease;
+    }
+
+    &:hover {
+        color: rgba(255, 255, 255, 0.85);
+
+        svg {
+            fill: rgba(255, 255, 255, 0.85);
+        }
+    }
+}
+
+/* ── CENTER LOGO ── */
+.fv2-emblem-row {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 40px 0;
+    border-bottom: 1px solid $olive-border;
+    text-align: center !important;
+}
+
+.fv2-footer-logo {
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    svg {
+        display: block;
+        margin: 0 auto !important;
+    }
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.03);
+    }
+}
+
+/* ── BOTTOM BAR ── */
+.fv2-bottom {
+    background: $olive-dark;
+    padding: 18px 0;
+}
+
+.fv2-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+}
+
+.fv2-copyright {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+.fv2-legal-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    a {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+            color: rgba(255, 255, 255, 0.85);
+        }
+    }
+
+    .fv2-sep {
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 11px;
+    }
+}

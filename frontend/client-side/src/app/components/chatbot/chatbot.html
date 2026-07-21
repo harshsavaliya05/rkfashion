@@ -1,0 +1,91 @@
+<!-- Chatbot Trigger Button -->
+<div class="chatbot-trigger" [class.near-footer]="nearFooter()" (click)="toggleChat()">
+  <i class="fa" [ngClass]="isOpen() ? 'fa-times' : 'fa-comments'"></i>
+</div>
+
+<!-- Chatbot Window -->
+@if (isOpen()) {
+<div class="chatbot-window">
+  <!-- Header -->
+  <div class="chatbot-header">
+    <div class="header-info">
+      <div class="bot-avatar">
+        <i class="fa fa-robot"></i>
+      </div>
+      <div class="bot-details">
+        <h4>RK Fashion AI</h4>
+        <span>Online</span>
+      </div>
+    </div>
+    <button class="close-btn" (click)="toggleChat()">
+      <i class="fa fa-minus"></i>
+    </button>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="chatbot-messages" #scrollMe>
+    @for (msg of messages(); track msg.timestamp) {
+    <div class="message-wrapper" [class.user]="msg.sender === 'user'" [class.bot]="msg.sender === 'bot'">
+      <div class="message-content">
+        <p>{{ msg.text }}</p>
+        
+        @if (msg.orders && msg.orders.length > 0) {
+          <div class="chatbot-order-options">
+            @for (order of msg.orders; track order.orderId) {
+              <button class="order-option-btn" (click)="showOrderStatus(order.orderId, order.status)">
+                Order #{{ order.orderId }}
+              </button>
+            }
+          </div>
+        }
+
+        @if (msg.links && msg.links.length > 0) {
+          <div class="chatbot-link-options">
+            @for (link of msg.links; track link.url) {
+              <a [href]="link.url" target="_blank" class="link-option-btn">
+                {{ link.label }}
+              </a>
+            }
+          </div>
+        }
+        
+        <span class="timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+    }
+    
+    @if (isTyping()) {
+    <div class="message-wrapper bot">
+      <div class="message-content typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- FAQ Suggestions (Dropdown) -->
+  <div class="faq-suggestions">
+    <select class="faq-select" (change)="onSelectFaq($event)" [disabled]="isTyping()">
+      <option value="" disabled selected>Ask a Quick Question...</option>
+      @for (faq of faqs(); track faq.question) {
+        <option [value]="faq.question">{{ faq.question }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Input Area -->
+  <div class="chatbot-input">
+    <input 
+      type="text" 
+      [(ngModel)]="inputMessage" 
+      (keypress)="handleKeyPress($event)"
+      placeholder="Type your message..." 
+      [disabled]="isTyping()">
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!inputMessage.trim() || isTyping()">
+      <i class="fa fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+}

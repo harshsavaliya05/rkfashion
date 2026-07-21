@@ -1,0 +1,615 @@
+<div class="dashboard-container" style="font-family: 'Outfit', sans-serif;">
+  <div class="row align-items-center mb-4">
+    <div class="col-md-5 col-12">
+      <h4 style="font-weight: 700; color: #111111; margin: 0;">Orders Management</h4>
+      <p style="color: #777777; font-size: 13px; margin: 0;">View, filter, and update active store orders placed by
+        customers in real-time.</p>
+    </div>
+    <!-- Search / Filter bar -->
+    <div class="col-md-7 col-12 d-flex flex-wrap justify-content-md-end justify-content-start align-items-center"
+      style="gap: 10px; margin-top: 12px;">
+      <!-- Search Input -->
+      <div style="position: relative; width: 220px;">
+        <input type="text" class="form-control" placeholder="Search order ID / name..." [(ngModel)]="searchTerm"
+          (input)="applyFilter()"
+          style="height: 38px; font-size: 13px; border-radius: 6px; padding-left: 32px; border-color: #eaeaea; font-family: 'Outfit';">
+        <i class="fa fa-search" style="position: absolute; left: 12px; top: 12px; color: #aaa; font-size: 13px;"></i>
+      </div>
+      <!-- Status Filter -->
+      <select class="form-control header-filter-select" [(ngModel)]="filterStatus" (change)="applyFilter()"
+        style="width: 180px !important;">
+        <option value="">All Orders</option>
+        <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+      </select>
+      <button class="btn btn-outline-secondary btn-sm" (click)="refreshOrders()" [disabled]="isRefreshing"
+        style="font-family: 'Outfit'; font-weight: 600; height: 38px; min-width: 120px; border-radius: 6px; border-color: #eaeaea; line-height: 1;">
+        <i class="fa fa-refresh" [class.fa-spin]="isRefreshing"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="d-flex mb-4" style="border-bottom: 2px solid #eaeaea; gap: 20px;">
+    <button type="button" class="tab-btn" [class.active]="currentTab === 'orders'" (click)="currentTab = 'orders'"
+      style="background: none; border: none; font-size: 14.5px; font-weight: 700; padding: 10px 5px; color: #777777; cursor: pointer; position: relative; font-family: 'Outfit', sans-serif;">
+      Active Orders
+      <div *ngIf="currentTab === 'orders'"
+        style="position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color);">
+      </div>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="currentTab === 'returns'" (click)="currentTab = 'returns'"
+      style="background: none; border: none; font-size: 14.5px; font-weight: 700; padding: 10px 5px; color: #777777; cursor: pointer; position: relative; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 6px;">
+      Returns
+      <span *ngIf="pendingReturnsCount > 0" class="badge"
+        style="background: #e53637; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 10px; font-weight: 700;">
+        {{ pendingReturnsCount }}
+      </span>
+      <div *ngIf="currentTab === 'returns'"
+        style="position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color);">
+      </div>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="currentTab === 'exchanges'" (click)="currentTab = 'exchanges'"
+      style="background: none; border: none; font-size: 14.5px; font-weight: 700; padding: 10px 5px; color: #777777; cursor: pointer; position: relative; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 6px;">
+      Exchanges
+      <span *ngIf="pendingExchangesCount > 0" class="badge"
+        style="background: #e53637; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 10px; font-weight: 700;">
+        {{ pendingExchangesCount }}
+      </span>
+      <div *ngIf="currentTab === 'exchanges'"
+        style="position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color);">
+      </div>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="currentTab === 'cancellations'"
+      (click)="currentTab = 'cancellations'; applyFilter();"
+      style="background: none; border: none; font-size: 14.5px; font-weight: 700; padding: 10px 5px; color: #777777; cursor: pointer; position: relative; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 6px;">
+      Cancellations
+      <span *ngIf="cancelledOrders.length > 0" class="badge"
+        style="background: #6c757d; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 10px; font-weight: 700;">
+        {{ cancelledOrders.length }}
+      </span>
+      <div *ngIf="currentTab === 'cancellations'"
+        style="position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-color);">
+      </div>
+    </button>
+  </div>
+
+  <div class="bottom-card" style="padding: 0;">
+    <!-- Active Orders View -->
+    <div *ngIf="currentTab === 'orders'">
+      <div class="table-responsive" *ngIf="filteredOrders.length > 0">
+        <table class="table responsive-card-table" style="margin-bottom: 0;">
+          <thead style="background: #f8fafc; border-bottom: 1px solid #eaeaea;">
+            <tr>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Order ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Customer</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Date</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Amount</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Status</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none; text-align: center; width: 160px;">Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of filteredOrders" style="border-bottom: 1px solid #f1f1f1;">
+              <td data-label="Order ID" style="padding: 15px 20px; vertical-align: middle;"><strong>{{ element.orderId
+                  }}</strong></td>
+              <td data-label="Customer" style="padding: 15px 20px; vertical-align: middle;">
+                <strong>{{ element.shippingAddress?.firstName }} {{ element.shippingAddress?.lastName }}</strong>
+              </td>
+              <td data-label="Date" style="padding: 15px 20px; vertical-align: middle; color: #777777;">{{ element.date
+                }}</td>
+              <td data-label="Amount"
+                style="padding: 15px 20px; vertical-align: middle; font-weight: 700; color: var(--primary-color);">₹{{
+                element.total.toLocaleString() }}</td>
+              <td data-label="Status" style="padding: 15px 20px; vertical-align: middle;">
+                <select class="form-control table-status-select" style="width: 175px !important;"
+                  [ngModel]="element.status"
+                  [disabled]="element.status.toLowerCase() === 'cancelled' || element.status.toLowerCase() === 'returned'"
+                  (ngModelChange)="updateOrderStatus(element.orderId, $event)">
+                  <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+                </select>
+              </td>
+              <td data-label="Actions" style="padding: 15px 20px; vertical-align: middle; text-align: center;">
+                <a href="javascript:void(0)" (click)="viewOrder(element)"
+                  style="color: var(--primary-color); font-size: 13.5px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
+                  title="View Details">
+                  <i class="fa fa-eye"></i> View Details
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredOrders.length === 0" class="text-center py-5" style="color: #777777;">
+        <i class="fa fa-shopping-cart"
+          style="font-size: 45px; color: #cccccc; margin-bottom: 15px; display: block;"></i>
+        <h6 style="font-weight: 700; color: #111111; margin-bottom: 5px;">No active orders found</h6>
+        <p style="font-size: 12px; margin: 0;">Once customers place orders on the RK Fashion website, they will appear
+          here instantly.</p>
+      </div>
+    </div>
+
+    <!-- Returns View -->
+    <div *ngIf="currentTab === 'returns'">
+      <div class="table-responsive" *ngIf="getReturnOnlyRequests().length > 0">
+        <table class="table responsive-card-table" style="margin-bottom: 0;">
+          <thead style="background: #f8fafc; border-bottom: 1px solid #eaeaea;">
+            <tr>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Request ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Order ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Items Info</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Reason / Preference</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Status</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none; text-align: center; width: 180px;">Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of getReturnOnlyRequests()" style="border-bottom: 1px solid #f1f1f1;">
+              <td data-label="Request ID" style="padding: 15px 20px; vertical-align: middle;"><strong>{{ req.requestId
+                  }}</strong></td>
+              <td data-label="Order ID" style="padding: 15px 20px; vertical-align: middle; font-family: monospace;">{{
+                req.orderId }}</td>
+              <td data-label="Items Info" style="padding: 15px 20px; vertical-align: middle;">
+                <div class="cell-content-wrap" style="width: 100%;">
+                  <div *ngFor="let itm of req.items" class="d-flex align-items-center mb-1" style="width: 100%;">
+                    <img *ngIf="itm.image" [src]="itm.image"
+                      style="width: 36px; height: 44px; object-fit: cover; border-radius: 4px; margin-right: 10px; flex-shrink: 0;">
+                    <div style="font-size: 11.5px; line-height: 1.35; flex: 1; word-break: break-word;">
+                      <div style="font-weight: 700; color: #111; word-break: break-word;">{{ itm.name }}</div>
+                      <div style="color: #666; font-size: 11px; margin-top: 2px;">
+                        Size: <strong>{{ itm.size }}</strong> |
+                        Color: <strong>{{ itm.colorName }}</strong> | Qty: <strong>{{ itm.quantity }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Reason" style="padding: 15px 20px; vertical-align: middle; font-size: 12.5px;">
+                <div class="cell-content-wrap"
+                  style="width: 100%; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;">
+                  <div
+                    style="font-weight: 700; color: #1e293b; width: 100%; text-align: left; word-break: break-word; font-size: 13px;">
+                    Reason: {{ req.reason }}</div>
+
+                  <!-- Comments box (e.g. simulation note or customer comment) -->
+                  <div *ngIf="req.comments"
+                    style="white-space: normal; font-family: monospace; font-size: 11.5px; line-height: 1.5; color: #065f46; background: #ecfdf5; border-left: 4px solid #10b981; padding: 10px 14px; border-radius: 6px; width: 100%; text-align: left; box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; margin-top: 2px;">
+                    {{ req.comments }}
+                  </div>
+
+                  <!-- Refund / Payment Method info block - Always visible & stacked vertically -->
+                  <div
+                    style="margin-top: 4px; font-size: 12px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 14px; border-radius: 8px; width: 100%; text-align: left; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                    <div
+                      style="font-weight: 700; color: #475569; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; white-space: normal; word-break: break-word;">
+                      <i class="fa fa-credit-card"
+                        style="color: var(--primary-color); font-size: 13px; flex-shrink: 0;"></i> Refund Gateway /
+                      Payment Method
+                    </div>
+
+                    <div
+                      style="font-weight: 700; color: #0f172a; font-size: 12.5px; word-break: break-word; white-space: normal; overflow-wrap: anywhere; line-height: 1.4; padding-left: 2px;">
+                      {{ req.refundMethod || 'Original Payment Mode' }}
+                    </div>
+
+                    <div *ngIf="req.refundDetails"
+                      style="color: #0f172a; font-weight: 600; font-size: 12px; background: #ffffff; padding: 10px 12px; border-radius: 6px; border: 1.5px dashed #cbd5e1; word-break: break-word; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; width: 100%; box-sizing: border-box; display: flex; align-items: flex-start; gap: 8px; margin-top: 2px;">
+                      <i class="fa fa-info-circle"
+                        style="color: #0288d1; font-size: 14px; margin-top: 2px; flex-shrink: 0;"></i>
+                      <span
+                        style="flex: 1; word-break: break-word; white-space: normal; overflow-wrap: anywhere; display: block; width: 100%;">{{
+                        req.refundDetails }}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Status" style="padding: 15px 20px; vertical-align: middle;">
+                <span class="badge font-weight-700"
+                  [ngStyle]="{'background-color': req.status === 'Pending' ? '#fffbeb' : req.status === 'Rejected' ? '#fef2f2' : '#ecfdf5', 'color': req.status === 'Pending' ? '#d97706' : req.status === 'Rejected' ? '#dc2626' : '#059669'}"
+                  style="padding: 5px 10px; font-size: 11px; text-transform: uppercase; border: 1px solid currentColor;">
+                  {{ req.status }}
+                </span>
+              </td>
+              <td data-label="Actions" style="padding: 15px 20px; vertical-align: middle; text-align: center;">
+                <div *ngIf="req.status === 'Pending'" class="d-flex justify-content-end align-items-center"
+                  style="gap: 8px; width: 100%;">
+                  <button type="button" class="btn btn-sm btn-success" (click)="triggerApproveDialog(req)"
+                    style="font-size: 11.5px; font-weight: 700; padding: 7px 14px; border-radius: 6px; border: none; background: #10b981; color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa fa-check"></i> Approve
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger" (click)="triggerRejectDialog(req)"
+                    style="font-size: 11.5px; font-weight: 700; padding: 7px 14px; border-radius: 6px; border: none; background: #ef4444; color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa fa-times"></i> Reject
+                  </button>
+                </div>
+
+                <div *ngIf="req.status !== 'Pending' && req.status !== 'Rejected'" class="tracker-select-container"
+                  style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;">
+                  <div
+                    style="font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    Update Tracker Status</div>
+                  <select class="form-control table-status-select"
+                    style="width: 100% !important; max-width: 180px; height: 36px !important; font-size: 12px !important; font-weight: 700 !important; border-radius: 6px !important; border: 1.5px solid #cbd5e1 !important; background-color: #ffffff !important; color: #0f172a !important; cursor: pointer;"
+                    [ngModel]="req.status" (ngModelChange)="updateReturnTrackerStatus(req, $event)">
+                    <option *ngFor="let option of returnTrackerOptions" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
+
+                <div *ngIf="req.status === 'Rejected'" style="text-align: right; width: 100%;">
+                  <span class="badge"
+                    style="background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 11px; padding: 6px 12px; border: 1px solid #fca5a5; border-radius: 6px; text-transform: uppercase;">
+                    <i class="fa fa-times-circle" style="margin-right: 4px;"></i> Request Rejected
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State for Returns -->
+      <div *ngIf="getReturnOnlyRequests().length === 0" class="text-center py-5" style="color: #777777;">
+        <i class="fa fa-reply" style="font-size: 45px; color: #cccccc; margin-bottom: 15px; display: block;"></i>
+        <h6 style="font-weight: 700; color: #111111; margin-bottom: 5px;">No return requests found</h6>
+        <p style="font-size: 12px; margin: 0;">When customers request returns for their delivered items, they will
+          appear here.</p>
+      </div>
+    </div>
+
+    <!-- Exchanges View -->
+    <div *ngIf="currentTab === 'exchanges'">
+      <div class="table-responsive" *ngIf="getExchangeOnlyRequests().length > 0">
+        <table class="table responsive-card-table" style="margin-bottom: 0;">
+          <thead style="background: #f8fafc; border-bottom: 1px solid #eaeaea;">
+            <tr>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Request ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Order ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Items Info</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Reason</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Status</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none; text-align: center; width: 180px;">Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of getExchangeOnlyRequests()" style="border-bottom: 1px solid #f1f1f1;">
+              <td data-label="Request ID" style="padding: 15px 20px; vertical-align: middle;"><strong>{{ req.requestId
+                  }}</strong></td>
+              <td data-label="Order ID" style="padding: 15px 20px; vertical-align: middle; font-family: monospace;">{{
+                req.orderId }}</td>
+              <td data-label="Items Info" style="padding: 15px 20px; vertical-align: middle;">
+                <div class="cell-content-wrap">
+                  <div *ngFor="let itm of req.items" class="d-flex align-items-center mb-1">
+                    <img *ngIf="itm.image" [src]="itm.image"
+                      style="width: 32px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 8px;">
+                    <div style="font-size: 11.5px; line-height: 1.3;">
+                      <div style="font-weight: 700; color: #111;">{{ itm.name }}</div>
+                      <div style="color: #666;">
+                        Size: <strong>{{ itm.size }}</strong>
+                        <span *ngIf="itm.newSize">➔ New Size: <strong style="color: #0288d1;">{{ itm.newSize
+                            }}</strong></span> |
+                        Color: <strong>{{ itm.colorName }}</strong> | Qty: <strong>{{ itm.quantity }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Reason" style="padding: 15px 20px; vertical-align: middle; font-size: 12.5px;">
+                <div class="cell-content-wrap">
+                  <div style="font-weight: 600; color: #333;">Reason: {{ req.reason }}</div>
+                  <div *ngIf="req.comments"
+                    style="white-space: pre-wrap; font-family: monospace; font-size: 11px; line-height: 1.4; color: #555; background: #f8f9fa; border-left: 3px solid #10b981; padding: 6px 10px; border-radius: 3px; margin-top: 5px; width: 100%; text-align: left;">
+                    {{ req.comments }}</div>
+                </div>
+              </td>
+              <td data-label="Status" style="padding: 15px 20px; vertical-align: middle;">
+                <span class="badge font-weight-700"
+                  [ngStyle]="{'background-color': req.status === 'Pending' ? '#fffbeb' : req.status === 'Rejected' ? '#fef2f2' : '#ecfdf5', 'color': req.status === 'Pending' ? '#d97706' : req.status === 'Rejected' ? '#dc2626' : '#059669'}"
+                  style="padding: 5px 10px; font-size: 11px; text-transform: uppercase; border: 1px solid currentColor;">
+                  {{ req.status }}
+                </span>
+              </td>
+              <td data-label="Actions" style="padding: 15px 20px; vertical-align: middle; text-align: center;">
+                <div *ngIf="req.status === 'Pending'" class="d-flex justify-content-end align-items-center"
+                  style="gap: 8px; width: 100%;">
+                  <button type="button" class="btn btn-sm btn-success" (click)="triggerApproveDialog(req)"
+                    style="font-size: 11.5px; font-weight: 700; padding: 7px 14px; border-radius: 6px; border: none; background: #10b981; color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa fa-check"></i> Approve
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger" (click)="triggerRejectDialog(req)"
+                    style="font-size: 11.5px; font-weight: 700; padding: 7px 14px; border-radius: 6px; border: none; background: #ef4444; color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa fa-times"></i> Reject
+                  </button>
+                </div>
+
+                <div *ngIf="req.status !== 'Pending' && req.status !== 'Rejected'" class="tracker-select-container"
+                  style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;">
+                  <div
+                    style="font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">
+                    Update Tracker Status</div>
+                  <select class="form-control table-status-select"
+                    style="width: 100% !important; max-width: 180px; height: 36px !important; font-size: 12px !important; font-weight: 700 !important; border-radius: 6px !important; border: 1.5px solid #cbd5e1 !important; background-color: #ffffff !important; color: #0f172a !important; cursor: pointer;"
+                    [ngModel]="req.status" (ngModelChange)="updateReturnTrackerStatus(req, $event)">
+                    <option *ngFor="let option of exchangeTrackerOptions" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
+
+                <div *ngIf="req.status === 'Rejected'" style="text-align: right; width: 100%;">
+                  <span class="badge"
+                    style="background: #fef2f2; color: #dc2626; font-weight: 700; font-size: 11px; padding: 6px 12px; border: 1px solid #fca5a5; border-radius: 6px; text-transform: uppercase;">
+                    <i class="fa fa-times-circle" style="margin-right: 4px;"></i> Request Rejected
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State for Exchanges -->
+      <div *ngIf="getExchangeOnlyRequests().length === 0" class="text-center py-5" style="color: #777777;">
+        <i class="fa fa-refresh" style="font-size: 45px; color: #cccccc; margin-bottom: 15px; display: block;"></i>
+        <h6 style="font-weight: 700; color: #111111; margin-bottom: 5px;">No exchange requests found</h6>
+        <p style="font-size: 12px; margin: 0;">When customers request size exchanges for their delivered items, they
+          will appear here.</p>
+      </div>
+    </div>
+
+    <!-- Cancellations View -->
+    <div *ngIf="currentTab === 'cancellations'">
+      <div class="table-responsive" *ngIf="cancelledOrders.length > 0">
+        <table class="table responsive-card-table" style="margin-bottom: 0;">
+          <thead style="background: #f8fafc; border-bottom: 1px solid #eaeaea;">
+            <tr>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Order ID</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Customer</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Date</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Amount</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none;">Status</th>
+              <th style="padding: 15px 20px; font-weight: 700; border: none; text-align: center; width: 160px;">Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let element of cancelledOrders"
+              style="border-bottom: 1px solid #f1f1f1; background-color: #fafafa; opacity: 0.85;">
+              <td data-label="Order ID" style="padding: 15px 20px; vertical-align: middle;"><strong>{{ element.orderId
+                  }}</strong></td>
+              <td data-label="Customer" style="padding: 15px 20px; vertical-align: middle;">
+                <strong>{{ element.shippingAddress?.firstName }} {{ element.shippingAddress?.lastName }}</strong>
+              </td>
+              <td data-label="Date" style="padding: 15px 20px; vertical-align: middle; color: #777777;">{{ element.date
+                }}</td>
+              <td data-label="Amount"
+                style="padding: 15px 20px; vertical-align: middle; font-weight: 700; color: #888; text-decoration: line-through;">
+                ₹{{ element.total.toLocaleString() }}</td>
+              <td data-label="Status" style="padding: 15px 20px; vertical-align: middle;">
+                <span class="badge"
+                  style="background-color: #ffebee; color: #c62828; font-size: 11.5px; padding: 6px 12px; border-radius: 20px; font-weight: 700;">
+                  CANCELLED
+                </span>
+              </td>
+              <td data-label="Actions" style="padding: 15px 20px; vertical-align: middle; text-align: center;">
+                <a href="javascript:void(0)" (click)="viewOrder(element)"
+                  style="color: var(--primary-color); font-size: 13.5px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
+                  title="View Details">
+                  <i class="fa fa-eye"></i> View Details
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="cancelledOrders.length === 0" class="text-center py-5" style="color: #777777;">
+        <i class="fa fa-ban" style="font-size: 45px; color: #cccccc; margin-bottom: 15px; display: block;"></i>
+        <h6 style="font-weight: 700; color: #111111; margin-bottom: 5px;">No cancelled orders found</h6>
+        <p style="font-size: 12px; margin: 0;">Cancelled customer orders will appear here for tracking history.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide-Over Side Drawer Backdrop -->
+<div class="drawer-backdrop" [class.active]="selectedOrder" (click)="selectedOrder = null"></div>
+
+<!-- Slide-Over Side Drawer Container -->
+<div class="order-drawer" [class.active]="selectedOrder" *ngIf="selectedOrder">
+
+  <!-- Drawer Header -->
+  <div class="drawer-header">
+    <h5><i class="fa fa-shopping-bag" style="color: var(--primary-color); margin-right: 6px;"></i> ORDER DETAILS: {{
+      selectedOrder.orderId }}</h5>
+    <button class="close-drawer-btn" (click)="selectedOrder = null" title="Close Drawer">
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Drawer Body -->
+  <div class="drawer-body">
+    <!-- Customer & Shipping Section -->
+    <div class="section-title">
+      <i class="fa fa-user"></i> Customer Info
+    </div>
+    <div class="mb-4"
+      style="font-size: 13px; line-height: 1.6; color: var(--text-main); background: var(--app-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <div style="margin-bottom: 8px;">
+        <strong style="color: var(--text-main);">Name:</strong> {{ selectedOrder.shippingAddress?.firstName }} {{
+        selectedOrder.shippingAddress?.lastName }}
+      </div>
+      <div style="margin-bottom: 8px;">
+        <strong style="color: var(--text-main);">Mobile Phone:</strong> {{ selectedOrder.shippingAddress?.phone }}
+      </div>
+      <div style="margin-bottom: 8px;">
+        <strong style="color: var(--text-main);">Email Address:</strong> {{ selectedOrder.userEmail }}
+      </div>
+      <div style="margin-bottom: 8px;">
+        <strong style="color: var(--text-main);">Address Type:</strong>
+        <span class="badge font-weight-700"
+          style="text-transform: uppercase; font-size: 9px; padding: 3px 6px; background-color: var(--primary-color); color: #fff;">
+          {{ selectedOrder.shippingAddress?.addressType || 'Home' }}
+        </span>
+      </div>
+      <div>
+        <strong style="color: var(--text-main);">Address:</strong> {{ selectedOrder.shippingAddress?.flatNo }}, {{
+        selectedOrder.shippingAddress?.areaName }}, {{ selectedOrder.shippingAddress?.landmark }}, {{
+        selectedOrder.shippingAddress?.city }}, {{ selectedOrder.shippingAddress?.state }} - {{
+        selectedOrder.shippingAddress?.postcode }}
+      </div>
+    </div>
+
+    <!-- Order Timeline & Info Section -->
+    <div class="section-title">
+      <i class="fa fa-clock-o"></i> Timing & Payment
+    </div>
+    <div class="mb-4" style="font-size: 13px; line-height: 1.6; color: #475569; padding-left: 5px;">
+      <div style="margin-bottom: 8px;">
+        <strong>Order Placed Date:</strong> {{ selectedOrder.date }}
+      </div>
+      <div style="margin-bottom: 8px;">
+        <strong>Payment Gateway:</strong> {{ selectedOrder.paymentMethod }}
+      </div>
+      <div>
+        <strong>Current Status:</strong>
+        <span class="badge font-weight-700"
+          [ngStyle]="{'background-color': selectedOrder.status === 'Processing' ? '#fef3c7' : selectedOrder.status === 'Shipped' ? '#dbeafe' : selectedOrder.status === 'Delivered' ? '#d1fae5' : '#fee2e2', 'color': selectedOrder.status === 'Processing' ? '#d97706' : selectedOrder.status === 'Shipped' ? '#2563eb' : selectedOrder.status === 'Delivered' ? '#059669' : '#dc2626'}"
+          style="padding: 4px 8px; font-size: 10px; text-transform: uppercase;">
+          {{ selectedOrder.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Products List Section -->
+    <div class="section-title">
+      <i class="fa fa-list"></i> Items Ordered ({{ selectedOrder.items?.length || 0 }})
+    </div>
+    <div class="mb-4">
+      <div *ngFor="let item of selectedOrder.items" class="d-flex align-items-center mb-3"
+        style="border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; background: var(--card-bg);">
+        <img *ngIf="item.image" [src]="item.image"
+          style="width: 40px; height: 40px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color); background: var(--app-bg); margin-right: 12px;">
+        <div *ngIf="!item.image"
+          style="width: 40px; height: 40px; border-radius: 6px; background-color: var(--app-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin-right: 12px;">
+          <i class="fa fa-shopping-bag" style="color: var(--text-muted); font-size: 18px;"></i>
+        </div>
+        <div style="flex: 1; font-size: 12.5px;">
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 3px;">{{ item.name }}</div>
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 3px;">
+            SKU: <span style="font-weight: 700; color: #e53637;">{{ item.sku || 'N/A' }}</span>
+          </div>
+          <div style="color: var(--text-muted); font-size: 11px;">
+            Size: <span style="font-weight: 700; color: var(--text-main); margin-right: 10px;">{{ item.size }}</span>
+            Color: <span class="color-preview-dot" [style.background-color]="item.colorHex || '#ccc'"
+              style="width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 3px; vertical-align: middle;"></span>
+            <span style="font-weight: 700; color: var(--text-main);">{{ item.colorName }}</span>
+          </div>
+        </div>
+        <div class="text-right" style="font-size: 12.5px;">
+          <div style="font-weight: 700; color: var(--text-main);">₹{{ (item.price * item.quantity).toLocaleString() }}
+          </div>
+          <div style="color: var(--text-muted); font-size: 11px;">₹{{ item.price.toLocaleString() }} x {{ item.quantity
+            }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Summary Section -->
+    <div class="section-title">
+      <i class="fa fa-calculator"></i> Price Breakdown
+    </div>
+    <div style="font-size: 13px; color: var(--text-main); padding: 10px 5px;">
+      <div class="d-flex justify-content-between mb-2">
+        <span>Cart Subtotal:</span>
+        <strong style="color: var(--text-main);">₹{{ selectedOrder.subtotal?.toLocaleString() }}</strong>
+      </div>
+      <div *ngIf="selectedOrder.discount" class="d-flex justify-content-between mb-2" style="color: #dc2626;">
+        <span>Promo Discount:</span>
+        <strong style="color: #dc2626;">-₹{{ selectedOrder.discount?.toLocaleString() }}</strong>
+      </div>
+      <div class="d-flex justify-content-between"
+        style="border-top: 1.5px solid var(--border-color); padding-top: 10px; margin-top: 10px; font-size: 14.5px;">
+        <span style="font-weight: 700; color: var(--text-main);">Grand Total:</span>
+        <strong style="color: var(--primary-color); font-size: 16px; font-weight: 800;">₹{{
+          selectedOrder.total?.toLocaleString() }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer Footer -->
+  <div class="drawer-footer">
+    <button class="primary-btn" (click)="selectedOrder = null"
+      style="padding: 10px 24px !important; border-radius: 6px !important; font-size: 12px !important; height: 38px; line-height: 18px; margin: 0; background: #0f172a !important;">
+      Close Panel
+    </button>
+  </div>
+</div>
+
+<!-- Custom Premium Approval Confirmation Dialog -->
+<div class="confirm-dialog-backdrop" [class.active]="showApproveConfirmReq !== null" (click)="cancelApproveDialog()">
+</div>
+<div class="confirm-dialog-wrapper" [class.active]="showApproveConfirmReq !== null">
+  <div class="confirm-dialog-card">
+    <div class="confirm-dialog-icon" style="color: #10b981; background: #ecfdf5;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <h3 class="confirm-title">Approve {{ showApproveConfirmReq?.type }} Request</h3>
+    <p class="confirm-text">
+      Are you sure you want to approve request <span style="font-weight: 700;">"{{ showApproveConfirmReq?.requestId
+        }}"</span> for Order #{{ showApproveConfirmReq?.orderId }}?<br>
+      <span style="font-size: 11.5px; display: inline-block; margin-top: 8px; font-weight: 500; color: #555;">
+        <i class="fa fa-info-circle"></i> This will change the order status to <strong>{{ showApproveConfirmReq?.type
+          === 'Return' ? 'Return Approved' : 'Exchange Approved' }}</strong>, trigger customer emails, and adjust
+        product inventory stock.
+      </span>
+    </p>
+    <div class="confirm-actions">
+      <button type="button" class="btn-cancel" (click)="cancelApproveDialog()">Cancel</button>
+      <button type="button" class="btn-confirm" (click)="confirmApproveRequest()"
+        style="background: #10b981 !important;">Confirm Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Premium Rejection Confirmation Dialog -->
+<div class="confirm-dialog-backdrop" [class.active]="showRejectConfirmReq !== null" (click)="cancelRejectDialog()">
+</div>
+<div class="confirm-dialog-wrapper" [class.active]="showRejectConfirmReq !== null">
+  <div class="confirm-dialog-card">
+    <div class="confirm-dialog-icon" style="color: #ef4444; background: #fef2f2;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+    </div>
+    <h3 class="confirm-title">Reject {{ showRejectConfirmReq?.type }} Request</h3>
+    <p class="confirm-text" style="margin-bottom: 12px;">
+      Are you sure you want to reject request <span style="font-weight: 700;">"{{ showRejectConfirmReq?.requestId
+        }}"</span> for Order #{{ showRejectConfirmReq?.orderId }}?
+    </p>
+
+    <!-- Rejection Reason input field -->
+    <div class="mb-4" style="text-align: left;">
+      <label style="font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; display: block;">Rejection
+        Reason / Comments</label>
+      <textarea class="form-control" rows="2"
+        placeholder="e.g. Returned product shows signs of heavy usage / tags removed." [(ngModel)]="rejectionReasonText"
+        style="font-size: 12.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit', sans-serif; resize: none;"></textarea>
+    </div>
+
+    <div class="confirm-actions">
+      <button type="button" class="btn-cancel" (click)="cancelRejectDialog()">Cancel</button>
+      <button type="button" class="btn-confirm" (click)="confirmRejectRequest()"
+        style="background: #ef4444 !important;">Confirm Reject</button>
+    </div>
+  </div>
+</div>

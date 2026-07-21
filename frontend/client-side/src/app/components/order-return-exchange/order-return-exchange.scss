@@ -1,0 +1,36 @@
+.return-exchange-section {
+  font-family: 'Outfit', sans-serif !important;
+
+  .re-item-row {
+    &.selected {
+      border-color: #1e0a3c !important;
+      background: #faf8fd;
+      box-shadow: 0 4px 12px rgba(30, 10, 60, 0.04);
+    }
+  }
+
+  .btn-submit-req {
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-cancel-req {
+    &:hover {
+      background: #f5f5f5;
+      color: #111111 !important;
+      border-color: #111111;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .re-summary-card {
+    position: static !important;
+    margin-top: 20px;
+  }
+}

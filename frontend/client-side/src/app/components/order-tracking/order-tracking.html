@@ -1,0 +1,217 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option" style="background: #f3f2ee; padding: 30px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4 style="font-weight: 700; color: #111111; text-transform: uppercase; margin-bottom: 8px;">Track Order</h4>
+                    <div class="breadcrumb__links" style="font-size: 14px;">
+                        <a routerLink="/" style="color: #111111; font-weight: 600; text-decoration: none; margin-right: 6px;">Home</a>
+                        <span style="color: #888; margin-right: 6px;">/</span>
+                        <a routerLink="/account/orders" style="color: #111111; font-weight: 600; text-decoration: none; margin-right: 6px;">My Orders</a>
+                        <span style="color: #888; margin-right: 6px;">/</span>
+                        <span style="color: #888;">Order Status Tracker</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Tracking Content Begin -->
+<section class="order-tracking-section" style="padding: 60px 0; background: #ffffff;">
+    <div class="container">
+        
+        <!-- Loading State -->
+        @if (isLoading) {
+            <div class="text-center py-5" style="color: #777777;">
+                <i class="fa fa-spinner fa-spin" style="font-size: 40px; color: #1e0a3c; margin-bottom: 15px;"></i>
+                <h5 style="font-weight: 700; color: #111111;">Loading Tracking Timeline...</h5>
+                <p style="font-size: 13px;">Fetching logistical information and status logs.</p>
+            </div>
+        } @else if (order) {
+            
+            <div class="row" style="row-gap: 30px;">
+                
+                <!-- Main Status Card -->
+                <div class="col-lg-12">
+                    <div class="re-form-card mb-4" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 30px; background: #ffffff;">
+                        
+                        <!-- Header Details -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #eaeaea; padding-bottom: 15px; margin-bottom: 30px; flex-wrap: wrap; gap: 10px; text-align: left;">
+                            <div>
+                                <h5 style="font-weight: 700; color: #111; margin: 0; text-transform: uppercase; font-family: 'Outfit';">Track Shipment</h5>
+                                <span style="font-size: 13px; color: #666; font-family: 'Outfit';">Order ID: <strong style="font-family: monospace; color: #111;">{{ order.orderId }}</strong></span>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="badge" 
+                                      [ngStyle]="{'background-color': order.status === 'Cancelled' ? '#ef4444' : '#1e0a3c', 'color': '#fff'}"
+                                      style="font-size: 11.5px; padding: 6px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 700;">
+                                    {{ order.status }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Special Cancelled Notice -->
+                        @if (order.status === 'Cancelled') {
+                            <div class="alert alert-danger mb-5 p-3" style="background: #fff5f5; border: 1px solid #ffe4e4; border-radius: 8px; color: #991b1b; text-align: left;">
+                                <h6 style="margin: 0 0 5px 0; font-weight: 700;"><i class="fa fa-times-circle"></i> This Order Was Cancelled</h6>
+                                <p style="margin: 0; font-size: 13px;">
+                                    This order has been cancelled and cannot be tracked further. Any payment debited will be refunded back to your source account within 3-5 business days.
+                                </p>
+                            </div>
+                        }
+
+                        <!-- Horizontal Timeline Container (Delivered/Normal Flow) -->
+                        @if (order.status !== 'Cancelled') {
+                            <div class="timeline-container">
+                                <div class="timeline-line-bg">
+                                    <div class="timeline-line-fill" [style.width.%]="(getActiveStepIndex() / (standardStatuses.length - 1)) * 100"></div>
+                                </div>
+                                
+                                <div class="timeline-steps">
+                                    @for (st of standardStatuses; track st; let idx = $index) {
+                                        <div class="timeline-step" [class.completed]="isMilestoneReached(st)" [class.active]="getActiveStepIndex() === idx">
+                                            <div class="step-node">
+                                                <i class="fa" [class.fa-check]="isMilestoneReached(st)" [class.fa-circle-o]="!isMilestoneReached(st)"></i>
+                                            </div>
+                                            <span class="step-label" style="font-weight: 700; color: #111; font-size: 13.5px; margin-top: 10px; display: block;">{{ st }}</span>
+                                            
+                                            <!-- Step Timestamp -->
+                                            @if (isMilestoneReached(st)) {
+                                                <span class="step-time" style="font-size: 10.5px; color: #777; display: block; margin-top: 3px; font-weight: 500;">
+                                                    {{ getMilestoneDate(st) }}
+                                                </span>
+                                            } @else {
+                                                <span class="step-time" style="font-size: 10.5px; color: #ccc; display: block; margin-top: 3px; font-style: italic;">
+                                                    Pending
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                <!-- Return & Exchange Pickup Details (Only if request exists) -->
+                @if (getReturnRequest(); as req) {
+                    <div class="col-lg-12">
+                        <div class="re-form-card" style="border: 1px solid #e5e5e5; border-radius: 8px; padding: 30px; background: #ffffff;">
+                            
+                            <!-- Header -->
+                            <div style="text-align: left; border-bottom: 1.5px solid #eaeaea; padding-bottom: 12px; margin-bottom: 25px;">
+                                <h5 style="font-weight: 700; color: #111; text-transform: uppercase; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa fa-reply-all" style="color: #dc3545;"></i>
+                                    {{ req.type }} Request Pickup & Status Logs
+                                </h5>
+                                <span style="font-size: 12.5px; color: #666;">Status ID: <strong style="font-family: monospace;">{{ req.requestId }}</strong></span>
+                            </div>
+
+                            <!-- Timeline for Return/Exchange Processing -->
+                            <div class="return-timeline" style="display: flex; flex-direction: column; gap: 20px; border-left: 2px solid #eaeaea; padding-left: 20px; margin-left: 10px; text-align: left;">
+                                
+                                <!-- Step 1: Request Initiated -->
+                                <div class="rt-node" style="position: relative;">
+                                    <div class="rt-dot" style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #27ae60;"></div>
+                                    <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 14px; color: #111;">{{ req.type }} Request Submitted</h6>
+                                    <span style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Reason: "{{ req.reason }}"</span>
+                                    <span style="font-size: 11px; color: #888; display: block;">Submitted successfully. Pending verification check.</span>
+                                    <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                        <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Submitted') }}
+                                    </span>
+                                </div>
+
+                                <!-- Step 2: Request Decision -->
+                                <div class="rt-node" style="position: relative;">
+                                    <div class="rt-dot" [ngStyle]="{'background': req.status === 'Pending' ? '#ccc' : (req.status === 'Rejected' ? '#ef4444' : '#27ae60')}"
+                                         style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                    
+                                    <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 14px; color: #111;">
+                                        Request Review: 
+                                        <span class="badge" 
+                                              [ngStyle]="{'background': req.status === 'Approved' ? '#ecfdf5' : (req.status === 'Rejected' ? '#fef2f2' : '#f0f9ff'), 'color': req.status === 'Approved' ? '#065f46' : (req.status === 'Rejected' ? '#991b1b' : '#087990')}"
+                                              style="font-size: 10px; padding: 3px 8px; border-radius: 4px;">
+                                            {{ req.status }}
+                                        </span>
+                                    </h6>
+                                    
+                                    @if (req.status !== 'Pending') {
+                                        <span style="font-size: 11px; color: #888; display: block;">Decision completed on: <strong>{{ getReturnMilestoneDate('Approved') }}</strong></span>
+                                        @if (req.status === 'Rejected' && req.comments) {
+                                            <span style="font-size: 12px; color: #dc3545; font-style: italic; display: block; margin-top: 4px;">"{{ req.comments }}"</span>
+                                        }
+                                    } @else {
+                                        <span style="font-size: 11px; color: #bbb; font-style: italic;">Pending review by RK Fashion administrators.</span>
+                                    }
+                                </div>
+
+                                <!-- Step 3: Courier Pickup -->
+                                @if (req.status !== 'Pending' && req.status !== 'Rejected') {
+                                    <div class="rt-node" style="position: relative;">
+                                        <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached('Courier Pickup') ? '#27ae60' : '#ccc'}"
+                                             style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                        <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 14px; color: #111;">
+                                            Courier Pickup
+                                        </h6>
+                                        @if (req.status.toLowerCase() === 'approved') {
+                                            <span style="font-size: 11px; color: #666; display: block;">Pickup request registered with shipment provider. Waiting for assignment.</span>
+                                        } @else {
+                                            <span style="font-size: 11px; color: #888; display: block;">Logistics status: <strong>{{ req.status }}</strong></span>
+                                            <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Courier Pickup') }}
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <!-- Step 4: Quality Inspection -->
+                                    <div class="rt-node" style="position: relative;">
+                                        <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached('Inspection') ? '#27ae60' : '#ccc'}"
+                                             style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                        <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 14px; color: #111;">Inspection</h6>
+                                        <span style="font-size: 11px; color: #888; display: block;">Items received at fulfillment center. Verification checks in progress.</span>
+                                        @if (isReturnMilestoneReached('Inspection')) {
+                                            <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate('Inspection') }}
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <!-- Step 5: Completed -->
+                                    <div class="rt-node" style="position: relative; padding-bottom: 10px;">
+                                        <div class="rt-dot" [ngStyle]="{'background': isReturnMilestoneReached(req.type === 'Return' ? 'Refund Processed' : 'Replacement Dispatched') ? '#27ae60' : '#ccc'}"
+                                             style="position: absolute; left: -27px; top: 4px; width: 12px; height: 12px; border-radius: 50%;"></div>
+                                        <h6 style="margin: 0 0 3px 0; font-weight: 700; font-size: 14px; color: #111;">
+                                            {{ req.type === 'Return' ? 'Refund Processed' : 'Replacement Dispatched' }}
+                                        </h6>
+                                        <span style="font-size: 11px; color: #888; display: block;">Once quality check is verified, refund credits or replacement shipments are processed instantly.</span>
+                                        @if (isReturnMilestoneReached(req.type === 'Return' ? 'Refund Processed' : 'Replacement Dispatched')) {
+                                            <span style="font-size: 11px; font-weight: 600; color: #27ae60; display: block; margin-top: 2px;">
+                                                <i class="fa fa-calendar-check-o"></i> {{ getReturnMilestoneDate(req.type === 'Return' ? 'Refund Processed' : 'Replacement Dispatched') }}
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+                <!-- Back button -->
+                <div class="col-lg-12 text-center" style="margin-top: 10px;">
+                    <a routerLink="/account/orders" class="btn-cancel-req"
+                       style="width: 180px; height: 44px; background: #0f172a; color: #ffffff; font-weight: 700; font-size: 13.5px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background 0.2s;">
+                        Back to Orders
+                    </a>
+                </div>
+
+            </div>
+
+        }
+    </div>
+</section>
+<!-- Tracking Content End -->

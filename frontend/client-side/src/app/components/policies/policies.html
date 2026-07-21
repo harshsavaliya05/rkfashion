@@ -1,0 +1,168 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Legal Policies</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <span>Policies</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Policies Section Begin -->
+<section class="policies spad">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 col-md-4">
+                <div class="policies__sidebar">
+                    <button class="policy-tab-btn" 
+                            [class.active]="activeTab === 'privacy'" 
+                            (click)="setTab('privacy')">
+                        <i class="fa fa-shield"></i> Privacy Policy
+                    </button>
+                    <button class="policy-tab-btn" 
+                            [class.active]="activeTab === 'terms'" 
+                            (click)="setTab('terms')">
+                        <i class="fa fa-file-text-o"></i> Terms & Conditions
+                    </button>
+                    <button class="policy-tab-btn" 
+                            [class.active]="activeTab === 'shipping'" 
+                            (click)="setTab('shipping')">
+                        <i class="fa fa-truck"></i> Shipping & Delivery
+                    </button>
+                    <button class="policy-tab-btn" 
+                            [class.active]="activeTab === 'returns'" 
+                            (click)="setTab('returns')">
+                        <i class="fa fa-refresh"></i> Returns & Exchanges
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Display Area -->
+            <div class="col-lg-9 col-md-8">
+                <div class="policies__content-box">
+                    
+                    <!-- 1. Privacy Policy -->
+                    @if (activeTab === 'privacy') {
+                        <div class="policy-section">
+                            <h2>Privacy Policy</h2>
+                            <p class="last-updated">Last Updated: January 1, 2026</p>
+                            
+                            <p>At RK Fashion, accessible from rkfashion.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by RK Fashion and how we use it.</p>
+                            
+                            <h3>Information We Collect</h3>
+                            <p>We collect personal information that you provide directly to us when you create an account, place an order, or subscribe to our newsletter. This may include:</p>
+                            <ul>
+                                <li>Name and Contact Information (Email Address, Phone Number, Shipping/Billing Address).</li>
+                                <li>Payment Information (processed securely through SSL encrypted gateways).</li>
+                                <li>Account credentials and date of birth details.</li>
+                            </ul>
+
+                            <h3>How We Use Your Information</h3>
+                            <p>We use the information we collect in various ways, including to:</p>
+                            <ul>
+                                <li>Provide, operate, and maintain our website.</li>
+                                <li>Process your orders, verify payments, and ship your items.</li>
+                                <li>Send you transaction updates, shipping notifications, and promotional emails (if subscribed).</li>
+                                <li>Improve, personalize, and expand our services and product offerings.</li>
+                            </ul>
+
+                            <h3>Data Security</h3>
+                            <p>We implement a variety of security measures to maintain the safety of your personal information when you place an order or enter, submit, or access your personal information. All credit card details are encrypted and processed through secure third-party gateway providers (Razorpay/SSL Checkouts).</p>
+                        </div>
+                    }
+
+                    <!-- 2. Terms & Conditions -->
+                    @if (activeTab === 'terms') {
+                        <div class="policy-section">
+                            <h2>Terms & Conditions</h2>
+                            <p class="last-updated">Last Updated: January 1, 2026</p>
+                            
+                            <p>Welcome to RK Fashion! These terms and conditions outline the rules and regulations for the use of RK Fashion's Website, located at Surat, Gujarat.</p>
+                            
+                            <h3>Intellectual Property</h3>
+                            <p>Unless otherwise stated, RK Fashion and/or its licensors own the intellectual property rights for all material on RK Fashion. All intellectual property rights are reserved. You must not copy, edit, redistribute, or sell any graphics, logos, or catalog assets without explicit written consent.</p>
+
+                            <h3>Product Listings & Pricing</h3>
+                            <p>We strive to display our products as accurately as possible. However, colors, textures, and fits may vary slightly based on browser resolutions. In the event of a pricing error in the store, RK Fashion reserves the right to cancel or refuse any orders placed at the incorrect price.</p>
+
+                            <h3>Account Responsibility</h3>
+                            <p>When you register an account, you are responsible for maintaining the confidentiality of your username and password, and for restricting access to your computer or mobile device to prevent unauthorized access.</p>
+
+                            <h3>Limitation of Liability</h3>
+                            <p>In no event shall RK Fashion, nor any of its officers, directors, and employees, be held liable for anything arising out of or in any way connected with your use of this Website.</p>
+                        </div>
+                    }
+
+                    <!-- 3. Shipping & Delivery -->
+                    @if (activeTab === 'shipping') {
+                        <div class="policy-section">
+                            <h2>Shipping & Delivery Policy</h2>
+                            <p class="last-updated">Last Updated: January 1, 2026</p>
+                            
+                            <p>We are committed to delivering your order accurately, in good condition, and always on time as promised by us on our website.</p>
+                            
+                            <h3>Shipping Locations & Partners</h3>
+                            <p>We ship products all across India. We partner with leading courier services such as BlueDart, Delhivery, and DTDC to ensure safe and fast shipping.</p>
+
+                            <h3>Delivery Timelines</h3>
+                            <ul>
+                                <li><strong>Local/Gujarat Delivery:</strong> Orders within Surat and Gujarat are typically delivered within 2 to 3 business days.</li>
+                                <li><strong>National/Rest of India:</strong> Orders shipped outside Gujarat take 4 to 7 business days depending on the location.</li>
+                                <li><strong>Dispatch Window:</strong> All orders are packaged and dispatched from our warehouse in Surat within 24 to 48 hours.</li>
+                            </ul>
+
+                            <h3>Shipping Charges</h3>
+                            <ul>
+                                <li>We offer <strong>FREE Delivery</strong> on all orders above ₹999.</li>
+                                <li>For orders below ₹999, a flat shipping fee of ₹99 is applicable.</li>
+                            </ul>
+
+                            <h3>Order Tracking</h3>
+                            <p>Once your order is shipped, you will receive an email and WhatsApp message containing your tracking number and courier link so you can monitor your package live.</p>
+                        </div>
+                    }
+
+                    <!-- 4. Returns & Exchanges -->
+                    @if (activeTab === 'returns') {
+                        <div class="policy-section">
+                            <h2>Returns & Exchanges Policy</h2>
+                            <p class="last-updated">Last Updated: January 1, 2026</p>
+                            
+                            <p>Please read our return and exchange guidelines carefully before placing an order on RK Fashion.</p>
+                            
+                            <h3>7-Day Size Exchange Only</h3>
+                            <p>We accept size exchange requests within <strong>7 days</strong> of delivery. Please note: we offer **Exchanges Only**, and no monetary refunds are issued unless the item is completely out of stock.</p>
+
+                            <h3>Conditions for Exchange</h3>
+                            <p>To qualify for an exchange, your item must meet the following criteria:</p>
+                            <ul>
+                                <li>The item must be completely unworn, unwashed, and undamaged.</li>
+                                <li>All original brand tags, pricing labels, and barcode tags must remain attached to the garment.</li>
+                                <li>The product must be returned in its original product packaging.</li>
+                            </ul>
+
+                            <h3>How to Initiate an Exchange</h3>
+                            <p>Please follow these steps to request a size exchange:</p>
+                            <ol>
+                                <li>Email our customer support team at <strong>support@rkfashion.com</strong> with your Order ID and the new size requested.</li>
+                                <li>We will schedule a reverse pickup from your address within 48 hours.</li>
+                                <li>Once we receive the returned item and inspect its condition, we will ship the replacement size to you free of cost.</li>
+                            </ol>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Policies Section End -->

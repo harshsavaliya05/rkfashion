@@ -1,0 +1,942 @@
+/* Global styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import './styles/bootstrap.min.css';
+@import './styles/font-awesome.min.css';
+@import './styles/elegant-icons.css';
+@import './styles/style.css';
+
+:root {
+  --primary-color: #1e0a3c;
+  --primary-hover: #351666;
+  --primary-bg: #f3effc;
+  --primary-light-text: #1e0a3c;
+  --primary-rgb: 30, 10, 60;
+
+  --app-bg: #f4f6fa;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --sidebar-bg: #ffffff;
+  --sidebar-active-bg: #f1f5f9;
+  --header-bg: #ffffff;
+  --input-bg: #ffffff;
+  --table-hover: #f8fafc;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+  background-color: var(--app-bg) !important;
+  color: var(--text-main) !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+.primary-btn {
+  background-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  border: 1.5px solid var(--primary-color) !important;
+  border-radius: 0px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+  transition: all 0.3s ease !important;
+  padding: 14px 30px !important;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.primary-btn:hover,
+.primary-btn:focus {
+  background-color: var(--primary-hover) !important;
+  color: #ffffff !important;
+  border-color: var(--primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.35) !important;
+}
+
+/* ====================================================
+   GLOBAL UNIFORM BUTTON HOVER — All major action buttons
+   (Save, Update, Publish, Cancel, Close, Draft, etc.)
+   Excludes small icon-only buttons (btn-xs with fa icons)
+   ==================================================== */
+
+/* btn-dark: Save Changes, Create Category, Choose File etc */
+.btn.btn-dark:not(:disabled):not(.btn-xs):hover,
+.btn.btn-dark:not(:disabled):not(.btn-xs):focus {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.30) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* btn-outline-secondary: Cancel, Close Panel, Save Draft, Refresh etc */
+.btn.btn-outline-secondary:not(:disabled):not(.btn-xs):hover,
+.btn.btn-outline-secondary:not(:disabled):not(.btn-xs):focus {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.25) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* btn-light: Cancel-style ghost buttons (e.g. in product-form) */
+.btn.btn-light:not(:disabled):hover,
+.btn.btn-light:not(:disabled):focus {
+  background-color: var(--primary-bg) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(var(--primary-rgb), 0.15) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* btn-outline-dark: miscellaneous outline action buttons */
+.btn.btn-outline-dark:not(:disabled):not(.btn-xs):hover,
+.btn.btn-outline-dark:not(:disabled):not(.btn-xs):focus {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.25) !important;
+  transition: all 0.25s ease !important;
+}
+
+/* header-action-btn: Add Product, Create Coupon, Create Campaign etc */
+.header-action-btn:not(:disabled):hover,
+.header-action-btn:not(:disabled):focus {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.30) !important;
+  transition: all 0.25s ease !important;
+}
+
+.bottom-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-container {
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.badge-success-custom {
+  background: #e6f9ed !important;
+  color: #10b981 !important;
+}
+
+.badge-danger-custom {
+  background: #ffebeb !important;
+  color: #e53637 !important;
+}
+
+.badge-warning-custom {
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+
+.table {
+  color: var(--text-main) !important;
+  background: transparent !important;
+}
+
+.table thead tr {
+  background: var(--sidebar-active-bg) !important;
+}
+
+.table thead th {
+  color: var(--text-muted) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--sidebar-active-bg) !important;
+}
+
+.table tbody tr {
+  background-color: var(--card-bg) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table tbody tr:hover {
+  background-color: var(--table-hover) !important;
+}
+
+.table tbody tr td {
+  color: var(--text-main) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  background: transparent !important;
+}
+
+.form-control,
+.admin-input,
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+  background-color: var(--input-bg) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+  font-family: 'Outfit', sans-serif;
+}
+
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.15) !important;
+  outline: none;
+}
+
+/* Fix for vertical lines inside Angular Material outlined input fields */
+::ng-deep {
+  .mdc-notched-outline__leading {
+    border-right: none !important;
+  }
+
+  .mdc-notched-outline__trailing {
+    border-left: none !important;
+  }
+
+  .mdc-notched-outline__notch {
+    border-left: none !important;
+    border-right: none !important;
+  }
+}
+
+
+/* Fix for cursor caret vertical line stretching */
+::ng-deep .mat-mdc-form-field input {
+  line-height: normal !important;
+  caret-color: var(--primary-color) !important;
+}
+
+// Reset Material input inner borders and box shadows on focus
+.mat-mdc-form-field {
+
+  input,
+  textarea,
+  select {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  }
+}
+
+option {
+  background-color: var(--input-bg) !important;
+  color: var(--text-main) !important;
+}
+
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: var(--input-bg);
+  --mdc-outlined-text-field-container-color: var(--input-bg);
+  --mdc-outlined-text-field-outline-color: var(--border-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mat-select-trigger-text-color: var(--text-main);
+  --mat-select-arrow-color: var(--text-muted);
+  --mdc-filled-text-field-label-text-color: var(--text-muted);
+  --mdc-outlined-text-field-label-text-color: var(--text-muted);
+  --mdc-filled-text-field-input-text-color: var(--text-main);
+}
+
+.mat-mdc-select-panel {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-option {
+  color: var(--text-main) !important;
+  background: var(--card-bg) !important;
+}
+
+.mat-mdc-option:hover {
+  background: var(--sidebar-active-bg) !important;
+}
+
+/* =============================================
+   CUSTOM CONFIRMATION DIALOG (GLOBAL STYLES)
+   ============================================= */
+.confirm-dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.confirm-dialog-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  z-index: 1110;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 90%;
+  max-width: 400px;
+
+  &.active {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+  }
+}
+
+.confirm-dialog-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid #eaeaea;
+
+  .confirm-dialog-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+
+    svg {
+      width: 54px;
+      height: 54px;
+      color: var(--primary-color);
+      stroke: var(--primary-color);
+      background: var(--primary-bg);
+      padding: 12px;
+      border-radius: 50%;
+    }
+  }
+
+  .confirm-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111111;
+    margin: 0 0 10px;
+  }
+
+  .confirm-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0 0 24px;
+  }
+
+  .confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+
+    button {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 13.5px;
+      height: 40px;
+      border-radius: 8px;
+      padding: 0 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    .btn-cancel {
+      background: #f8fafc;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+
+      &:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+    }
+
+    .btn-confirm {
+      background: var(--primary-color);
+      color: #ffffff;
+      border: none;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+/* Hide default browser up/down arrow spinners on all number input fields */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Responsive Table Adjustments & Overflows (adminHMD Style) */
+.table-responsive {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  margin-bottom: 0;
+
+  table.table {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    border-collapse: collapse !important;
+
+    th,
+    td {
+      white-space: nowrap !important;
+      /* Prevents columns from wrapping and squeezing text into vertical rows */
+      vertical-align: middle !important;
+    }
+
+    td {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    td.wrap-column {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+
+      span,
+      div,
+      strong,
+      img,
+      a {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+      }
+
+      p {
+        white-space: normal !important;
+        overflow: hidden !important;
+        /* Retain hidden overflow so webkit-line-clamp computes height correctly */
+        text-overflow: ellipsis !important;
+      }
+    }
+  }
+}
+
+/* Custom Scrollbar for horizontal scrolling tables on mobile */
+.table-responsive::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 4px !important;
+}
+
+/* Fix to prevent parent containers from stretching beyond viewport */
+.bottom-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  /* Confines table-responsive scroll within card border */
+  box-sizing: border-box !important;
+}
+
+.dashboard-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 15px !important;
+    /* Extra padding optimization on mobile */
+  }
+}
+
+/* Global Header Action Buttons and Filters */
+.header-action-btn {
+  padding: 10px 20px !important;
+  font-size: 12px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 38px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+}
+
+/* Premium Spacious Spacing for Page Headings & Subtitles */
+.row.align-items-center.mb-4 {
+  h4 {
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+    /* Spacious gap between heading and subtitle */
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px !important;
+    line-height: 1.2 !important;
+    font-family: 'Outfit', sans-serif !important;
+  }
+
+  p {
+    margin: 0 !important;
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+    color: #64748b !important;
+    /* Premium muted slate color */
+    font-family: 'Outfit', sans-serif !important;
+  }
+}
+
+/* Premium Custom Styled Native Select Dropdowns */
+select.form-control.header-filter-select,
+select.form-control.table-status-select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 14px !important;
+  padding: 0 30px 0 12px !important;
+  /* Zero vertical padding prevents text offset/clipping */
+  height: 36px !important;
+  /* Premium standard height */
+  line-height: normal !important;
+  /* Browser manages baseline centering naturally */
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  border: 1px solid #eaeaea !important;
+  font-family: 'Outfit', sans-serif !important;
+  color: #444444 !important;
+  cursor: pointer !important;
+  background-color: #ffffff !important;
+  box-sizing: border-box !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  width: auto !important;
+
+  &:focus {
+    border-color: #111111 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+select.form-control.header-filter-select {
+  width: 160px !important;
+}
+
+select.form-control.table-status-select {
+  height: 36px !important;
+  padding: 0 28px 0 10px !important;
+  line-height: normal !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  background-position: right 10px center !important;
+  background-size: 12px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 5 !important;
+
+  option {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* Responsive Page Header Actions (Stack vertically on mobile) */
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    padding-bottom: 90px !important;
+  }
+}
+
+@media (max-width: 576px) {
+
+  /* Fix layout rows */
+  .row.align-items-center.mb-4 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+
+    h4 {
+      font-size: 20px !important;
+      /* Premium smaller typography for mobile screens */
+      margin-bottom: 6px !important;
+    }
+
+    p {
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+    }
+
+    .col-6,
+    .col-8,
+    .col-4,
+    .col-12 {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+      text-align: left !important;
+    }
+
+    /* Spacious separation gap before filters/actions start */
+    .col-12:first-of-type {
+      margin-bottom: 12px !important;
+    }
+
+    /* Target the column containing buttons, filters, and search box elements */
+    .text-right,
+    .justify-content-end,
+    .d-flex {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
+      width: 100% !important;
+      gap: 10px !important;
+      margin-top: 5px !important;
+
+      /* Make inline-styled search wrappers take 100% width on mobile */
+      div[style*="width: 220px"],
+      div[style*="width: 200px"],
+      div[style*="width: 150px"],
+      div[style*="position: relative"] {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        input {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+      }
+
+      select.form-control.header-filter-select {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 36px !important;
+        margin: 0 0 10px 0 !important;
+        display: block !important;
+        padding: 0 30px 0 12px !important;
+        line-height: normal !important;
+      }
+
+      .header-action-btn,
+      button,
+      a.primary-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 40px !important;
+        line-height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+      }
+    }
+  }
+
+  /* Form actions and submit buttons (Stack vertically on mobile) */
+  form .text-right,
+  .col-12.d-flex.justify-content-end.align-items-center,
+  .form-actions-row,
+  .drawer-footer {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    /* Action button on top, Cancel button at bottom */
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    padding: 0 !important;
+
+    a,
+    button {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      /* Reset side margins */
+      text-align: center !important;
+      justify-content: center !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      height: 44px !important;
+      line-height: 44px !important;
+      padding: 0 15px !important;
+      box-sizing: border-box !important;
+      font-size: 13px !important;
+      border-radius: 6px !important;
+    }
+  }
+}
+
+/* ====================================================
+   UNIVERSAL RESPONSIVE CARD TABLE SYSTEM
+   Transforms data tables into clean, beautiful cards on mobile
+   without any horizontal side scrolling!
+   ==================================================== */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px 12px 15px 12px !important;
+  }
+
+  .table-responsive {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .table.responsive-card-table {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    margin-bottom: 0 !important;
+
+    thead {
+      display: none !important;
+      /* Hide header rows on mobile */
+    }
+
+    tbody {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      width: 100% !important;
+      padding: 4px 0 0 0 !important;
+    }
+
+    tr {
+      display: block !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 12px 14px !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04) !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative !important;
+      z-index: 1 !important;
+
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    td {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: flex-start !important;
+      padding: 8px 0 !important;
+      border: none !important;
+      border-bottom: 1px dashed #f1f5f9 !important;
+      font-size: 13px !important;
+      text-align: right !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      word-break: normal !important;
+      overflow-wrap: break-word !important;
+
+      >.cell-content-wrap {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 68% !important;
+        text-align: right !important;
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+        box-sizing: border-box !important;
+
+        * {
+          min-width: 0 !important;
+          white-space: normal !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
+        }
+      }
+
+      /* Full-width complex cells (Article Info, Customer Info, Customer, Sender, Subject, Items Info, Reason, Actions, Banner Info, Product Name, Product, Product Info, Description, Redirect Link, Review) */
+      &[data-label="Article Info"],
+      &[data-label="Customer Info"],
+      &[data-label="Customer"],
+      &[data-label="Sender"],
+      &[data-label="Subject"],
+      &[data-label="Items Info"],
+      &[data-label="Reason"],
+      &[data-label="Actions"],
+      &[data-label="Banner Info"],
+      &[data-label="Product Name"],
+      &[data-label="Product"],
+      &[data-label="Product Info"],
+      &[data-label="Description"],
+      &[data-label="Redirect Link"],
+      &[data-label="Review"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: left !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        white-space: normal !important;
+
+        &[data-label]::before {
+          margin-bottom: 8px !important;
+        }
+
+        >.cell-content-wrap,
+        >.tracker-select-container,
+        >div,
+        >span,
+        >strong,
+        >p {
+          max-width: 100% !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          text-align: left !important;
+          align-items: stretch !important;
+          box-sizing: border-box !important;
+
+          *:not(.blog-content-clamp) {
+            min-width: 0 !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+          }
+        }
+      }
+
+      .blog-content-clamp {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 3 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+      }
+
+      &[data-label="Actions"] {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        .actions-flex-group {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: flex-end !important;
+          gap: 10px !important;
+          width: auto !important;
+        }
+
+        .tracker-select-container {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-end !important;
+          max-width: 180px !important;
+          width: 100% !important;
+        }
+
+        .table-status-select {
+          width: 100% !important;
+          max-width: 180px !important;
+          height: 36px !important;
+          font-size: 12px !important;
+          font-weight: 700 !important;
+        }
+      }
+
+      &:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+        margin-top: 6px !important;
+      }
+
+      /* Displays the field label on the left using data-label attribute */
+      &[data-label]::before {
+        content: attr(data-label);
+        font-weight: 700 !important;
+        color: #64748b !important;
+        font-size: 11.5px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        text-align: left !important;
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+        padding-top: 2px !important;
+      }
+    }
+  }
+}

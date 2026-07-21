@@ -1,0 +1,71 @@
+<div class="edit-profile-section">
+    <div class="section-title">
+        <h4>Edit Profile Details</h4>
+        <p>Keep your contact details and preferences up to date.</p>
+    </div>
+
+    <form (submit)="handleProfileSave($event)" class="profile-form">
+        <div class="row">
+            <!-- Full Name -->
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="dense-form-field">
+                    <mat-label>Full Name</mat-label>
+                    <input matInput 
+                           id="profile-name" 
+                           name="name" 
+                           placeholder="Enter your full name" 
+                           [(ngModel)]="nameInput" 
+                           required>
+                </mat-form-field>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="dense-form-field">
+                    <mat-label>Phone Number</mat-label>
+                    <span matTextPrefix>+91 &nbsp;</span>
+                    <input matInput 
+                           type="tel" 
+                           id="profile-phone" 
+                           name="phone" 
+                           placeholder="10-digit mobile number" 
+                           [(ngModel)]="phoneInput"
+                           (input)="validatePhone($event)"
+                           maxlength="10">
+                </mat-form-field>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="dense-form-field">
+                    <mat-label>Date of Birth</mat-label>
+                    <input matInput 
+                           [matDatepicker]="picker" 
+                           id="profile-dob" 
+                           name="dob" 
+                           [(ngModel)]="dobInput"
+                           placeholder="Choose a date">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <!-- Gender Selector -->
+            <div class="col-md-12">
+                <div class="gender-section-wrapper">
+                    <label class="gender-label">Gender</label>
+                    <mat-radio-group [(ngModel)]="genderInput" name="gender" class="gender-radio-group">
+                        <mat-radio-button value="male">Male</mat-radio-button>
+                        <mat-radio-button value="female">Female</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" routerLink="/account">Cancel</button>
+            <button type="submit" class="save-btn">Save Changes</button>
+        </div>
+    </form>
+</div>
+

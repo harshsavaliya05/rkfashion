@@ -1,0 +1,34 @@
+node_modules/
+
+# Keep environment variables out of version control
+.env
+.env.local
+.env.*.local
+
+# Prisma generated client
+/generated/prisma/
+
+# Build output
+dist/
+
+# Uploaded files (user-generated content)
+uploads/
+
+# Debug & test scripts
+check_*.js
+test_*.js
+test_*.ts
+test-*.js
+dashboard_screenshot.png
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+*.log

@@ -1,0 +1,51 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>FAQs</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <span>FAQs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- FAQs Section Begin -->
+<section class="faqs spad">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="faqs__header">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faqs__divider"></div>
+                    <p>Have questions? We're here to help. Explore our popular answers below.</p>
+                </div>
+
+                <div class="faqs__list">
+                    @for (faq of faqsList; track faq.q) {
+                        <div class="faqs__item" [class.faqs__item--active]="activeFaq === faq.q">
+                            <div class="faqs__question" (click)="toggleFaq(faq.q)">
+                                <span>{{ faq.q }}</span>
+                                <span class="faqs__icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="faqs__chevron">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="faqs__answer" [style.display]="activeFaq === faq.q ? 'block' : 'none'">
+                                <p>{{ faq.a }}</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- FAQs Section End -->

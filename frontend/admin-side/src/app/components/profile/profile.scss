@@ -1,0 +1,25 @@
+/* Scoped styling for Profile dashboard */
+.toast-feedback-wrapper {
+  position: fixed;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+
+  &.active {
+    bottom: 30px;
+  }
+
+  .toast-feedback-card {
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 12px 24px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}

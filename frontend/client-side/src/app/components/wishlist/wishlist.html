@@ -1,0 +1,89 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Wishlist</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <span>Wishlist</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Wishlist Section Begin -->
+<section class="wishlist spad">
+
+    <div class="container">
+        <!-- Title and count -->
+        <div class="wishlist__header">
+            <h2>My Wishlist <span>({{ wishlistItems.length }} {{ wishlistItems.length === 1 ? 'item' : 'items' }})</span></h2>
+            @if (wishlistItems.length > 0) {
+                <a routerLink="/shop" class="continue-shopping-link"><i class="fa fa-arrow-left"></i> Continue Shopping</a>
+            }
+        </div>
+
+        @if (wishlistItems.length === 0) {
+            <!-- Empty Wishlist State -->
+            <div class="wishlist__empty">
+                <div class="empty-icon-wrap">
+                    <i class="fa fa-heart-o"></i>
+                </div>
+                <h3>Your Wishlist is Empty</h3>
+                <p>Add items that you like to your wishlist. They will be saved here so you can purchase them anytime!</p>
+                <button routerLink="/shop" class="shop-now-btn">Explore Shop</button>
+            </div>
+        } @else {
+            <!-- Wishlist Grid -->
+            <div class="row wishlist__grid">
+                @for (product of wishlistItems; track product.id) {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-6 wishlist__col">
+                        <div class="wishlist__card">
+                            <!-- Image Wrap -->
+                            <div class="wishlist__img-wrap" [routerLink]="['/shop-details', product.id]">
+                                <img [src]="product.image" [alt]="product.name" class="wishlist__img">
+                                
+                                <!-- Delete Button -->
+                                <button class="wishlist__delete-btn" (click)="removeItem(product.id, $event)" title="Remove item">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+
+                                @if (product.label) {
+                                    <span class="wishlist__badge badge__orange">{{ product.label }}</span>
+                                } @else if (product.discountPercent) {
+                                    <span class="wishlist__badge badge__red">{{ product.discountPercent }}% OFF</span>
+                                }
+                            </div>
+
+                            <!-- Info -->
+                            <div class="wishlist__info">
+                                <h6 class="wishlist__title" [routerLink]="['/shop-details', product.id]">{{ product.name }}</h6>
+                                
+
+
+                                <!-- Price Row -->
+                                <div class="wishlist__price-row">
+                                    <span class="price-symbol">₹</span>
+                                    <span class="price-whole">{{ product.price.toFixed(0) }}</span>
+                                    @if (product.originalPrice) {
+                                        <span class="price-mrp"><s>₹{{ product.originalPrice.toFixed(0) }}</s></span>
+                                    }
+                                </div>
+
+                                <!-- Move to Cart Button -->
+                                <button class="wishlist__cart-btn" (click)="moveToCart(product, $event)">
+                                    <i class="fa fa-shopping-bag"></i> Move to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>

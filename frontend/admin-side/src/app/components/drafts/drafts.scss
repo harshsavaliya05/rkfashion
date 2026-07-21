@@ -1,0 +1,20 @@
+/* Drafts component styles */
+.dashboard-container {
+  padding: 30px;
+}
+.bottom-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  margin-top: 20px;
+  overflow: hidden;
+}
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  
+  tr:hover {
+    background-color: #fafbfc;
+  }
+}

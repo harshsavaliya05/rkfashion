@@ -1,0 +1,121 @@
+<div class="overview-section">
+    <!-- Welcome Header -->
+    <div class="overview__header">
+        <h3>Welcome back, <span>{{ user?.name }}</span>!</h3>
+        <p>From your account dashboard, you can easily view your recent orders, manage shipping addresses, and edit your profile details.</p>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="overview__stats-grid">
+        <div class="stat-card orders-card" routerLink="/account/orders">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h4>{{ ordersCount }}</h4>
+                <p>Total Orders</p>
+            </div>
+        </div>
+
+        <div class="stat-card wishlist-card" routerLink="/wishlist">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h4>{{ wishlistCount }}</h4>
+                <p>Wishlist Items</p>
+            </div>
+        </div>
+
+        <div class="stat-card cart-card" routerLink="/cart">
+            <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h4>{{ cartCount }}</h4>
+                <p>Items in Cart</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Profile Summary Card -->
+        <div class="col-md-6 mb-4">
+            <div class="info-card">
+                <div class="info-card__header">
+                    <h5>Profile Summary</h5>
+                    <a routerLink="/account/edit-profile" class="edit-link">Edit Details</a>
+                </div>
+                <div class="info-card__body">
+                    <ul class="info-list">
+                        <li>
+                            <span class="label">Full Name:</span>
+                            <span class="value">{{ user?.name }}</span>
+                        </li>
+                        <li>
+                            <span class="label">Email Address:</span>
+                            <span class="value">{{ user?.email }}</span>
+                        </li>
+                        <li>
+                            <span class="label">Phone Number:</span>
+                            <span class="value">{{ user?.phone || 'Not Specified' }}</span>
+                        </li>
+                        <li>
+                            <span class="label">Gender:</span>
+                            <span class="value">{{ getGenderLabel(user?.gender) }}</span>
+                        </li>
+                        <li>
+                            <span class="label">Date of Birth:</span>
+                            <span class="value">{{ getFormattedDob(user?.dob) }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Default Shipping Address -->
+        <div class="col-md-6 mb-4">
+            <div class="info-card">
+                <div class="info-card__header">
+                    <h5>Default Shipping Address</h5>
+                    <a routerLink="/account/addresses" class="edit-link">Manage Addresses</a>
+                </div>
+                <div class="info-card__body">
+                    @if (user?.addresses && user.addresses.length > 0) {
+                        <div class="address-summary">
+                            <span class="address-badge">{{ defaultAddress.addressType | uppercase }}</span>
+                            <h6>{{ defaultAddress.firstName }} {{ defaultAddress.lastName }}</h6>
+                            <p class="address-text">
+                                {{ defaultAddress.flatNo }}, {{ defaultAddress.areaName }}<br>
+                                @if (defaultAddress.landmark) {
+                                    Landmark: {{ defaultAddress.landmark }}<br>
+                                }
+                                {{ defaultAddress.city }}, {{ defaultAddress.state }} - {{ defaultAddress.postcode }}
+                            </p>
+                            <p class="phone-text"><strong>Phone:</strong> {{ defaultAddress.phone }}</p>
+                        </div>
+                    } @else {
+                        <div class="no-address">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <p>No shipping addresses saved yet.</p>
+                            <a routerLink="/account/addresses" class="add-address-btn">Add New Address</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,104 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.local
+.env.*.local
+
+# ========================
+# Build Outputs
+# ========================
+dist/
+/backend/dist/
+/frontend/admin-side/dist/
+/frontend/client-side/dist/
+out-tsc/
+tmp/
+bazel-out/
+
+# ========================
+# Angular Cache
+# ========================
+.angular/cache/
+.angular/
+
+# ========================
+# Prisma Generated
+# ========================
+/backend/generated/
+
+# ========================
+# Uploaded Files (user-generated content)
+# ========================
+/backend/uploads/
+
+# ========================
+# IDE & Editor Config
+# ========================
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/
+
+# ========================
+# OS Generated Files
+# ========================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ========================
+# Test & Coverage
+# ========================
+/coverage/
+*.lcov
+.nyc_output/
+testem.log
+
+# ========================
+# Miscellaneous
+# ========================
+.sass-cache/
+/connect.lock
+/libpeerconnection.log
+/typings
+__screenshots__/
+
+# Package lock files (optional - uncomment if you want to exclude)
+# package-lock.json
+
+# ========================
+# Debug & Test Scripts
+# ========================
+/backend/check_*.js
+/backend/test_*.js
+/backend/test_*.ts
+/backend/test-*.js
+/backend/dashboard_screenshot.png

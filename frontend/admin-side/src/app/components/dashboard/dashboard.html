@@ -1,0 +1,174 @@
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header-clean">
+    <div>
+      <h2>Dashboard Overview</h2>
+      <p class="subtitle text-muted">A clean, real-time snapshot of your store's sales and stock performance.</p>
+    </div>
+    <div class="header-actions">
+      <span class="date-badge"><i class="fa fa-calendar-o"></i> Live: Today</span>
+    </div>
+  </div>
+
+  <!-- Metric Stats Grid -->
+  <div class="metrics-grid">
+    <!-- Card 1: Total Revenue -->
+    <div class="metric-card" *ngIf="stats[0]">
+      <div class="card-header-flex">
+        <span class="metric-title">{{ stats[0].title }}</span>
+        <div class="metric-icon-wrap green">
+          <i class="fa fa-money"></i>
+        </div>
+      </div>
+      <h3 class="metric-value">{{ stats[0].value }}</h3>
+      <div class="metric-footer">
+        <span class="trend-badge positive"><i class="fa fa-arrow-up"></i> {{ stats[0].trend }}</span>
+        <span class="footer-text">{{ stats[0].subText }}</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Total Orders -->
+    <div class="metric-card" *ngIf="stats[1]">
+      <div class="card-header-flex">
+        <span class="metric-title">{{ stats[1].title }}</span>
+        <div class="metric-icon-wrap blue">
+          <i class="fa fa-shopping-bag"></i>
+        </div>
+      </div>
+      <h3 class="metric-value">{{ stats[1].value }}</h3>
+      <div class="metric-footer">
+        <span class="trend-badge positive"><i class="fa fa-arrow-up"></i> {{ stats[1].trend }}</span>
+        <span class="footer-text">{{ stats[1].subText }}</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Active Products -->
+    <div class="metric-card" *ngIf="stats[2]">
+      <div class="card-header-flex">
+        <span class="metric-title">{{ stats[2].title }}</span>
+        <div class="metric-icon-wrap purple">
+          <i class="fa fa-tag"></i>
+        </div>
+      </div>
+      <h3 class="metric-value">{{ stats[2].value }}</h3>
+      <div class="metric-footer">
+        <span class="trend-badge positive"><i class="fa fa-check"></i> {{ stats[2].trend }}</span>
+        <span class="footer-text">{{ stats[2].subText }}</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Low Stock Alert -->
+    <div class="metric-card" *ngIf="stats[3]">
+      <div class="card-header-flex">
+        <span class="metric-title">{{ stats[3].title }}</span>
+        <div class="metric-icon-wrap orange">
+          <i class="fa fa-exclamation-circle"></i>
+        </div>
+      </div>
+      <h3 class="metric-value">{{ stats[3].value }}</h3>
+      <div class="metric-footer">
+        <span class="trend-badge" [ngClass]="stats[3].isPositive ? 'positive' : 'negative'">
+          <i class="fa" [ngClass]="stats[3].isPositive ? 'fa-check' : 'fa-arrow-down'"></i> {{ stats[3].trend }}
+        </span>
+        <span class="footer-text">{{ stats[3].subText }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts & Graphs Section -->
+  <div class="charts-overview-row">
+    <!-- Chart 1: Sales & Revenue Trend (SVG Line Chart) -->
+    <div class="chart-card large-chart">
+      <div class="card-title-flex">
+        <div>
+          <h5>Sales & Revenue Trend</h5>
+          <p class="card-subtitle text-muted">Monthly billing and gross sales revenue</p>
+        </div>
+        <select class="card-select">
+          <option>Year 2026</option>
+        </select>
+      </div>
+      
+      <!-- Premium Line Chart SVG -->
+      <div class="svg-chart-container">
+        <svg viewBox="0 0 600 180" class="line-chart-svg">
+          <!-- Gradients -->
+          <defs>
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.00" />
+            </linearGradient>
+          </defs>
+
+          <!-- Grid Lines -->
+          <line x1="30" y1="30" x2="570" y2="30" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="30" y1="65" x2="570" y2="65" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="30" y1="100" x2="570" y2="100" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="30" y1="135" x2="570" y2="135" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="30" y1="150" x2="570" y2="150" stroke="#e2e8f0" stroke-width="1" />
+
+          <!-- Filled Area Under the Curve -->
+          <path [attr.d]="svgAreaPath" fill="url(#chartGradient)" />
+
+          <!-- Line Curve -->
+          <path [attr.d]="svgPath" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Data Nodes and Tooltip interactions -->
+          <g *ngFor="let point of salesData">
+            <!-- Node circles -->
+            <circle [attr.cx]="point.x" [attr.cy]="point.y" r="5" fill="#ffffff" stroke="#10b981" stroke-width="2.5" class="chart-point" />
+            <!-- Hover effect large circle -->
+            <circle [attr.cx]="point.x" [attr.cy]="point.y" r="10" fill="#10b981" fill-opacity="0" class="chart-point-hover">
+              <title>{{point.label}}: ₹{{point.value.toLocaleString()}}</title>
+            </circle>
+            <!-- Value text -->
+            <text [attr.x]="point.x" [attr.y]="point.y - 10" text-anchor="middle" font-size="9" font-family="'Outfit', sans-serif" font-weight="600" fill="#1e293b" class="point-value-label">
+              ₹{{point.value >= 1000 ? (point.value/1000) + 'k' : point.value}}
+            </text>
+          </g>
+
+          <!-- X-Axis Labels -->
+          <text *ngFor="let point of salesData" [attr.x]="point.x" y="168" text-anchor="middle" font-size="10" font-family="'Outfit', sans-serif" fill="#64748b">
+            {{point.label}}
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Chart 2: Weekly Sales (Bar Chart) -->
+    <div class="chart-card small-chart">
+      <div class="card-title-flex">
+        <div>
+          <h5>Weekly Sales</h5>
+          <p class="card-subtitle text-muted">Daily sales revenue breakdown</p>
+        </div>
+      </div>
+
+      <div class="bar-chart-container">
+        <svg viewBox="0 0 320 180" class="bar-chart-svg">
+          <!-- Grid lines -->
+          <line x1="20" y1="30" x2="300" y2="30" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="20" y1="70" x2="300" y2="70" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="20" y1="110" x2="300" y2="110" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="4" />
+          <line x1="20" y1="150" x2="300" y2="150" stroke="#e2e8f0" stroke-width="1" />
+
+          <!-- Bars -->
+          <g *ngFor="let item of weeklySales">
+            <rect [attr.x]="item.x" [attr.y]="150 - item.height" width="22" [attr.height]="item.height" [attr.fill]="item.color" rx="4" class="bar-rect">
+              <title>{{item.day}}: ₹{{item.sales.toLocaleString()}}</title>
+            </rect>
+            <!-- Value text on top of bars -->
+            <text [attr.x]="item.x + 11" [attr.y]="145 - item.height" text-anchor="middle" font-size="8" font-family="'Outfit', sans-serif" font-weight="600" fill="#475569">
+              {{item.sales >= 1000 ? (item.sales/1000) + 'k' : item.sales}}
+            </text>
+            <!-- X Axis labels -->
+            <text [attr.x]="item.x + 11" y="165" text-anchor="middle" font-size="10" font-family="'Outfit', sans-serif" fill="#64748b">
+              {{item.day}}
+            </text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</div>

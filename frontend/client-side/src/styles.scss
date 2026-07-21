@@ -1,0 +1,1073 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* =====================================================
+   PURPLE THEME - CSS VARIABLES (matching admin-side)
+   ===================================================== */
+:root {
+    --primary-color: #A05AFF;
+    --primary-hover: #863be0;
+    --primary-bg: #f5f0ff;
+    --primary-light-text: #691db3;
+    --primary-rgb: 160, 90, 255;
+
+    --app-bg: #faf8f5; // Cream off-white background matching About Us page
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+    background-color: var(--app-bg) !important;
+    color: var(--text-main) !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+@import './styles/bootstrap.min.css';
+@import './styles/font-awesome.min.css';
+@import './styles/elegant-icons.css';
+@import './styles/magnific-popup.css';
+@import './styles/nice-select.css';
+@import './styles/owl.carousel.min.css';
+@import './styles/slicknav.min.css';
+@import './styles/style.css';
+
+/* Fix overlapping product stars caused by Angular HTML whitespace removal */
+.product__item__text .rating i,
+.product__item.sale .product__item__text .rating i {
+    margin-right: 4px !important;
+}
+
+/* Set SVG logo vertical alignment */
+.logo-svg {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* =====================================================
+   GLOBAL RESET TO DISABLE BROWSER FOCUS OUTLINES ON TRASH ICONS
+   ===================================================== */
+.cart-remove-icon,
+mat-icon.cart-remove-icon,
+.cart-remove-icon:focus,
+.cart-remove-icon:active,
+.cart-remove-icon:focus-visible,
+mat-icon.cart-remove-icon:focus,
+mat-icon.cart-remove-icon:active,
+mat-icon.cart-remove-icon:focus-visible {
+    outline: none !important;
+    outline: 0 !important;
+    outline-width: 0 !important;
+    outline-color: transparent !important;
+    outline-style: none !important;
+    outline-offset: 0 !important;
+    border: none !important;
+    border-style: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ── NEW PRODUCT CARD DESIGN (GLOBAL STYLE) ── */
+.new-product-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 470px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    position: relative;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+
+    &:hover {
+        box-shadow: 0 15px 40px rgba(160, 90, 255, 0.12);
+    }
+}
+
+.new-product-card-top {
+    height: 73%; /* Portrait image container (height: 343px) */
+    width: 100%;
+    background-color: #f5f6f8; /* Soft light backdrop for clothing images */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+
+    .new-product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Edge-to-edge full bleed representation */
+        object-position: top; /* Prevents model head/face cropping */
+        padding: 0;
+    }
+
+    .new-product-badge {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: #e53637; /* Clean sale badge red */
+        color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 4px;
+        z-index: 3;
+    }
+
+    .heart-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: white;
+        color: #1e0a3c; /* Inactive: footer color (dark purple) outline */
+        border: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        z-index: 3;
+        transition: all 0.2s ease;
+
+        i {
+            font-size: 11px;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            line-height: 1;
+            margin-top: 1px; /* Optical vertical center adjustment */
+        }
+
+        &.active {
+            background: #f5f0ff; /* Active background: light lavender */
+            color: #1e0a3c; /* Active icon: dark purple (footer color) */
+            box-shadow: 0 2px 10px rgba(30, 10, 60, 0.15);
+        }
+    }
+}
+
+.new-product-card-bottom {
+    height: 27%; /* Details container (height: 127px) */
+    width: 100%;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    box-sizing: border-box;
+
+    .new-product-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-main);
+        line-height: 1.3;
+        text-align: left;
+        cursor: pointer;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .new-product-qty-price {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 4px;
+
+        .new-product-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e0a3c;
+
+            .old-price {
+                font-size: 11px;
+                text-decoration: line-through;
+                color: var(--text-muted);
+                margin-left: 6px;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .new-product-colors {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+
+        .color-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+
+            &:hover::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 120%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #1e0a3c;
+                color: #ffffff;
+                padding: 4px 8px;
+                font-size: 8px;
+                font-weight: 600;
+                white-space: nowrap;
+                border-radius: 4px;
+                z-index: 999;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                pointer-events: none;
+                font-family: 'Outfit', sans-serif;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .new-product-actions {
+        margin-top: 6px;
+        width: 100%;
+
+        .add-to-cart-btn {
+            width: 100%;
+            background-color: #1e0a3c;
+            color: white;
+            border: none;
+            padding: 6px 0;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: var(--primary-color);
+            }
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .new-product-card {
+        height: 330px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .new-product-card-top {
+        height: 72%;
+
+        .heart-btn {
+            width: 24px;
+            height: 24px;
+            top: 8px;
+            right: 8px;
+
+            i {
+                font-size: 9px;
+            }
+        }
+
+        .new-product-badge {
+            font-size: 8px;
+            padding: 2px 6px;
+            bottom: 8px;
+            left: 8px;
+        }
+    }
+
+    .new-product-card-bottom {
+        height: 28%;
+        padding: 8px 10px;
+
+        .new-product-title {
+            font-size: 11px;
+        }
+
+        .new-product-qty-price {
+            margin-top: 2px;
+
+            .new-product-price {
+                font-size: 12px;
+
+                .old-price {
+                    font-size: 9px;
+                    margin-left: 4px;
+                }
+            }
+        }
+
+        .new-product-colors {
+            margin-top: 2px;
+            gap: 4px;
+
+            .color-label {
+                font-size: 8px;
+            }
+
+            .color-dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
+
+        .new-product-actions {
+            margin-top: 4px;
+
+            .add-to-cart-btn {
+                padding: 4px 0;
+                font-size: 8px;
+                border-radius: 4px;
+            }
+        }
+    }
+}
+
+
+/* ── FANCY HORIZONTAL BLOG CARDS (GLOBAL STYLE) ── */
+.fancy-blog-card {
+    display: flex;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    height: 250px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+        box-shadow: 0 10px 25px rgba(160, 90, 255, 0.08);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        height: auto;
+    }
+}
+
+.fancy-blog-img-wrap {
+    width: 42%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+
+    @media (max-width: 767px) {
+        width: 100%;
+        height: 190px;
+    }
+}
+
+.fancy-blog-content {
+    width: 58%;
+    padding: 22px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+
+    @media (max-width: 991px) {
+        padding: 18px 20px;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+        padding: 18px;
+    }
+}
+
+.fancy-blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.fancy-blog-author-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fancy-blog-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+        color: var(--primary-color);
+        font-size: 13px;
+    }
+}
+
+.fancy-blog-author-meta {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    .author-name {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #333333;
+    }
+
+    .post-date {
+        font-family: 'Outfit', sans-serif;
+        font-size: 10px;
+        color: #888888;
+    }
+}
+
+.fancy-blog-dots {
+    i {
+        color: #888888;
+        font-size: 14px;
+        cursor: pointer;
+    }
+}
+
+.fancy-blog-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: #1e0a3c;
+    margin: 0 0 8px 0;
+    text-align: left;
+    line-height: 1.3;
+
+    @media (max-width: 991px) {
+        font-size: 18px;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 16px;
+    }
+}
+
+.fancy-blog-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11.5px;
+    color: #666666;
+    line-height: 1.5;
+    text-align: left;
+    margin: 0 0 12px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: 767px) {
+        font-size: 11px;
+    }
+}
+
+.fancy-blog-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+    margin-bottom: 12px;
+}
+
+.fancy-blog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .blog-stats {
+        display: flex;
+        gap: 12px;
+
+        .stat-item {
+            font-family: 'Outfit', sans-serif;
+            font-size: 10.5px;
+            color: #888888;
+        }
+    }
+
+    .blog-likes {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .like-count {
+            font-family: 'Outfit', sans-serif;
+            font-size: 11px;
+            color: #888888;
+            font-weight: 700;
+        }
+
+        i {
+            color: #ef4444;
+            font-size: 13px;
+        }
+    }
+}
+
+/* =====================================================
+   GLOBAL PURPLE BRAND THEMING
+   ===================================================== */
+body,
+html {
+    background-color: var(--app-bg) !important;
+    color: var(--text-main) !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #1e0a3c;
+}
+
+// spad containers should match the background
+.spad,
+section.spad,
+.shop-details.spad,
+.related.spad,
+.latest.spad {
+    background-color: var(--app-bg) !important;
+}
+
+// Make card blocks white
+.shop-custom-card,
+.luxury-product-card,
+.cart__discount,
+.cart__total,
+.checkout__order,
+.fancy-blog-card,
+.about__item,
+.mat-mdc-card,
+.product__item,
+.blog__item {
+    background-color: #ffffff !important;
+    border: 1.5px solid rgba(160, 90, 255, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(160, 90, 255, 0.04) !important;
+}
+
+// Restyle breadcrumbs with a rich image background
+.breadcrumb-option,
+.sd-breadcrumb,
+.breadcrumb-section {
+    background-image: url('/img/breadcrumb-bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    padding: 80px 0 !important;
+    position: relative !important;
+    border-bottom: none !important;
+
+    // Dark luxury overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(30, 10, 60, 0.75) !important; // Deep dark purple overlay
+        z-index: 1;
+    }
+
+    .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .breadcrumb__text {
+        text-align: center;
+
+        h4 {
+            color: #ffffff !important;
+            font-size: 38px !important;
+            font-weight: 700 !important;
+            margin-bottom: 15px !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+        }
+
+        .breadcrumb__links {
+
+            a,
+            span {
+                color: #ffffff !important;
+                font-family: 'Outfit', sans-serif !important;
+                text-transform: uppercase !important;
+                letter-spacing: 1.5px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+            }
+
+            a {
+                opacity: 0.7;
+                transition: opacity 0.3s;
+                margin-right: 18px;
+                position: relative;
+
+                &:hover {
+                    opacity: 1;
+                }
+
+                &::after {
+                    content: '>';
+                    position: absolute;
+                    right: -14px;
+                    top: 1px;
+                    font-size: 12px;
+                    opacity: 0.7;
+                }
+            }
+
+            span {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+// Standard CTA buttons across the whole app
+.site-btn,
+.primary-btn,
+button.site-btn,
+.checkout__btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: 1.5px solid var(--primary-color) !important;
+    border-radius: 6px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding: 14px 30px !important;
+
+    &:hover {
+        background-color: transparent !important;
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 5px 15px rgba(160, 90, 255, 0.2) !important;
+    }
+}
+
+// Inputs global styling
+input,
+textarea,
+select {
+    border-radius: 6px !important;
+    border-color: var(--border-color) !important;
+    font-family: 'Outfit', sans-serif !important;
+
+    &:focus {
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 0 3px rgba(160, 90, 255, 0.15) !important;
+    }
+}
+
+// Reset Material input inner borders and box shadows on focus
+.mat-mdc-form-field {
+
+    input,
+    textarea,
+    select {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+
+        &:focus {
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+    }
+}
+
+/* ── LOGOUT CONFIRMATION DIALOG MATERIAL CUSTOMIZATION ── */
+.logout-confirm-dialog {
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+        background-color: #ffffff !important;
+        border-radius: 16px !important;
+        padding: 16px 24px !important;
+        box-shadow: 0 20px 45px rgba(160, 90, 255, 0.12), 0 5px 15px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid rgba(160, 90, 255, 0.1) !important;
+    }
+}
+
+/* =====================================================
+   GLOBAL BUTTON OVERRIDE — EVERY BUTTON = FOOTER DARK PURPLE
+   No button should be left black. This is the master override.
+   ===================================================== */
+a.site-btn,
+.site-btn,
+.primary-btn,
+.checkout__btn,
+.shop-now-btn,
+.btn-checkout-proceed,
+.auth__btn,
+.modal-btn,
+.fancy-category-btn,
+.shop-custom-add-btn {
+    background-color: #1e0a3c !important;
+    background: #1e0a3c !important;
+    color: #ffffff !important;
+    border-color: #1e0a3c !important;
+    transition: all 0.3s ease !important;
+
+    &:hover,
+    &:focus {
+        background-color: var(--primary-color) !important;
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(160, 90, 255, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }
+}
+
+// Specifically keep cancel / secondary buttons looking neutral
+.em-btn-cancel,
+.btn-cancel,
+[class*="cancel-btn"] {
+    background-color: #f8fafc !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
+
+    &:hover {
+        background-color: #f1f5f9 !important;
+        background: #f1f5f9 !important;
+        color: #1e0a3c !important;
+        border-color: #1e0a3c !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+}
+
+// Keep quantity +/- buttons transparent
+.qtybtn {
+    background: transparent !important;
+    border: none !important;
+    color: #666 !important;
+    box-shadow: none !important;
+    transform: none !important;
+
+    &:hover {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+}
+
+// Keep icon-only close buttons neutral
+.em-close-btn {
+    background: #f8f8f8 !important;
+    color: #555 !important;
+    border-color: #e0e0e0 !important;
+
+    &:hover {
+        background: #1e0a3c !important;
+        color: #fff !important;
+        border-color: #1e0a3c !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+}
+
+// em-size-btn (size selector in cart modal)
+.em-size-btn {
+    background: #fff !important;
+    color: #333 !important;
+    border-color: #ddd !important;
+    box-shadow: none !important;
+    transform: none !important;
+
+    &:hover:not(.em-size-active) {
+        border-color: #1e0a3c !important;
+        color: #1e0a3c !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    &.em-size-active {
+        background: #1e0a3c !important;
+        color: #fff !important;
+        border-color: #1e0a3c !important;
+    }
+}
+
+/* =====================================================
+   ANGULAR MATERIAL GLOBAL INDIGO-PINK OVERRIDES
+   Forces selected checkmarks, text, active states, and focus
+   outlines to match our theme dark purple (#1e0a3c).
+   ===================================================== */
+// Notched outline border on focus
+.mat-focused,
+.mat-mdc-form-field.mat-focused {
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+        border-color: #1e0a3c !important;
+        border-width: 2px !important;
+    }
+
+    .mat-mdc-select-arrow {
+        color: #1e0a3c !important;
+    }
+
+    .mat-mdc-floating-label {
+        color: #1e0a3c !important;
+    }
+}
+
+// Dropdown Option - Selected Checkbox checkmark
+.mat-pseudo-checkbox-checked,
+.mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after {
+    background-color: #1e0a3c !important;
+    border-color: #1e0a3c !important;
+    color: #ffffff !important;
+}
+
+// Checked checkmark border color inside select options
+.mat-mdc-option.mdc-list-item--selected {
+    .mat-pseudo-checkbox-checked::after {
+        border-color: #ffffff !important;
+    }
+
+    .mdc-list-item__primary-text {
+        color: #1e0a3c !important;
+    }
+}
+
+// Selected option background and hover/focus states
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background-color: rgba(30, 10, 60, 0.05) !important;
+}
+
+// Material Option active focus indicator
+.mat-mdc-option:hover:not(.mdc-list-item--disabled),
+.mat-mdc-option.mat-mdc-option-active {
+    background-color: rgba(30, 10, 60, 0.03) !important;
+}
+
+// Global Radio Button Overrides to theme dark purple
+mat-radio-button,
+.mat-mdc-radio-button {
+    --mdc-radio-selected-focus-icon-color: #1e0a3c !important;
+    --mdc-radio-selected-hover-icon-color: #1e0a3c !important;
+    --mdc-radio-selected-icon-color: #1e0a3c !important;
+    --mdc-radio-selected-pressed-icon-color: #1e0a3c !important;
+    --mat-radio-checked-ripple-color: #1e0a3c !important;
+    --mdc-theme-primary: #1e0a3c !important;
+    --mdc-theme-secondary: #1e0a3c !important;
+}
+
+// Hard override for the actual Material radio button DOM elements to guarantee color change
+.mdc-radio .mdc-radio__native-control:enabled:checked~.mdc-radio__background .mdc-radio__outer-circle,
+.mat-mdc-radio-button.mat-mdc-radio-checked .mdc-radio__background .mdc-radio__outer-circle,
+.mat-mdc-radio-button.mat-accent.mat-mdc-radio-checked .mdc-radio__background .mdc-radio__outer-circle {
+    border-color: #1e0a3c !important;
+}
+
+.mdc-radio .mdc-radio__native-control:enabled:checked~.mdc-radio__background .mdc-radio__inner-circle,
+.mat-mdc-radio-button.mat-mdc-radio-checked .mdc-radio__background .mdc-radio__inner-circle,
+.mat-mdc-radio-button.mat-accent.mat-mdc-radio-checked .mdc-radio__background .mdc-radio__inner-circle {
+    border-color: #1e0a3c !important;
+    background-color: #1e0a3c !important;
+    color: #1e0a3c !important;
+}
+
+// Global mobile spacing overrides for sticky top and fixed bottom navbar active on all devices
+@media only screen and (max-width: 767px) {
+    body {
+        padding-top: 135px !important;
+        padding-bottom: 70px !important;
+    }
+}
+
+// Global mobile filter badge styling to guarantee color theme consistency and line-height centering
+.mobile__filter__badge {
+    background: #ffffff !important;
+    color: #1e0a3c !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    letter-spacing: 0 !important;
+    line-height: 1 !important;
+}
+
+// Global Responsive Display Rules for Header/Navbar
+@media only screen and (min-width: 768px) {
+
+    .mobile-top-header,
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+
+    .header,
+    .canvas__open,
+    .offcanvas-menu-wrapper,
+    .offcanvas-menu-overlay {
+        display: none !important;
+    }
+}
+
+// Mobile Bottom Navigation Bar Styling
+.mobile-bottom-nav {
+    display: none !important;
+
+    @media only screen and (max-width: 767px) {
+        display: flex !important;
+    }
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(30, 10, 60, 0.08);
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+    height: 60px;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: 2px;
+    transition: all 0.3s ease;
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none !important;
+        color: #888888;
+        transition: color 0.2s;
+        flex: 1;
+        height: 100%;
+        justify-content: center;
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke: #888888;
+            stroke-width: 2.2;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+        }
+
+        span {
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        &.active {
+            color: #1e0a3c;
+
+            svg {
+                stroke: #1e0a3c;
+                transform: scale(1.08) translateY(-1px);
+            }
+
+            span {
+                font-weight: 700;
+            }
+        }
+
+        .icon-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: #1e0a3c !important;
+            color: #ffffff !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 8px !important;
+            font-weight: 800 !important;
+            width: 14px !important;
+            height: 14px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 1px solid #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            letter-spacing: 0 !important;
+            line-height: 1 !important;
+        }
+    }
+}

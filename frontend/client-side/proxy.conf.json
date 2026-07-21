@@ -1,0 +1,10 @@
+{
+  "/sms-api": {
+    "target": "https://www.fast2sms.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/sms-api": ""
+    }
+  }
+}

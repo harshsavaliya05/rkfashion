@@ -1,0 +1,297 @@
+<div class="admin-wrapper" [class.mobile-open]="isSidebarMobileOpen">
+  <!-- Sidebar Panel -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <svg width="35" height="35" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 22h20L12 2z" style="stroke: var(--primary-color)" stroke-width="2" stroke-linejoin="round"
+          fill="none" />
+        <circle cx="12" cy="14" r="3" style="fill: var(--primary-color)" />
+      </svg>
+      <span class="brand-text">RK Fashion</span>
+    </div>
+
+    <!-- Admin profile card inside sidebar -->
+    <div class="sidebar-profile">
+      <div class="profile-avatar">
+        <span>{{ adminName.charAt(0).toUpperCase() }}</span>
+      </div>
+      <div class="profile-info">
+        <span class="welcome-text">Welcome Back,</span>
+        <h6 class="profile-name">{{ adminName }}</h6>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav" style="overflow-y: auto; flex: 1; max-height: calc(100vh - 160px); padding-bottom: 20px;">
+      <ul>
+        <!-- 1. Dashboard -->
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-th-large"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+
+        <!-- 2. Products -->
+        <li class="has-submenu" [class.open]="openSubmenus['products']">
+          <a href="javascript:void(0)" (click)="toggleSubmenu('products')" [class.active]="isSubmenuActive('products')">
+            <i class="fa fa-tag"></i>
+            <span>Products</span>
+            <i class="fa fa-chevron-down submenu-arrow"></i>
+          </a>
+          <ul class="submenu-list">
+            <li><a routerLink="/products" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">All
+                Products</a></li>
+            <li><a routerLink="/products/add" routerLinkActive="active">Add Product</a></li>
+            <li><a routerLink="/drafts" routerLinkActive="active">Drafts</a></li>
+            <li><a routerLink="/categories" routerLinkActive="active">Categories</a></li>
+          </ul>
+        </li>
+
+        <!-- 3. Orders -->
+        <li>
+          <a routerLink="/orders" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-shopping-cart"></i>
+            <span>Orders</span>
+          </a>
+        </li>
+
+        <!-- 4. Customers -->
+        <li>
+          <a routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-users"></i>
+            <span>Customers</span>
+          </a>
+        </li>
+
+        <!-- 5. Blogs -->
+        <li>
+          <a routerLink="/blogs" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-newspaper-o"></i>
+            <span>Blogs</span>
+          </a>
+        </li>
+
+        <!-- 6. Coupons -->
+        <li>
+          <a routerLink="/coupons" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-ticket"></i>
+            <span>Coupons</span>
+          </a>
+        </li>
+
+        <!-- 7. Banners -->
+        <li>
+          <a routerLink="/banners" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-picture-o"></i>
+            <span>Banners</span>
+          </a>
+        </li>
+
+        <!-- 8. Campaigns -->
+        <li>
+          <a routerLink="/campaigns" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-paper-plane-o"></i>
+            <span>Campaigns</span>
+          </a>
+        </li>
+
+        <!-- 9. Reviews -->
+        <li>
+          <a routerLink="/reviews" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-star"></i>
+            <span>Reviews</span>
+          </a>
+        </li>
+
+        <!-- 9. Contact Messages -->
+        <li>
+          <a routerLink="/messages" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-envelope-o"></i>
+            <span>Messages</span>
+          </a>
+        </li>
+
+        <!-- 10. Reports -->
+        <li>
+          <a routerLink="/reports" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-line-chart"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+
+        <!-- 11. Settings -->
+        <li>
+          <a routerLink="/settings" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+
+        <!-- 12. Admin Profile -->
+        <li>
+          <a routerLink="/profile" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="fa fa-user-circle-o"></i>
+            <span>Admin Profile</span>
+          </a>
+        </li>
+
+        <!-- 13. Logout -->
+        <li>
+          <a href="javascript:void(0)" class="nav-logout" (click)="handleLogout()">
+            <i class="fa fa-sign-out" style="color: #e53637;"></i>
+            <span style="color: #e53637;">Logout</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Sidebar Overlay for mobile -->
+  <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+
+  <!-- Main Viewport -->
+  <div class="admin-main">
+    <!-- Top Header -->
+    <header class="main-header">
+      <div class="header-left">
+        <button class="hamburger-btn" (click)="toggleSidebar()">
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="search-bar">
+          <i class="fa fa-search search-icon"></i>
+          <input type="text" [value]="searchService.getQuery()" placeholder="Search products, orders..." (input)="onSearch($event)" (focus)="onSearchFocus()">
+
+          <!-- Dropdown Search Results Overlay -->
+          <div class="search-results-overlay" *ngIf="showOverlay && searchService.getQuery().trim()">
+            <div class="search-results-content">
+              <!-- No Results State -->
+              <div class="no-results" *ngIf="!hasResults">
+                <i class="fa fa-info-circle"></i> No matches found for "{{ searchService.getQuery() }}"
+              </div>
+
+              <!-- Products Section -->
+              <div class="results-section" *ngIf="filteredProducts.length > 0">
+                <div class="section-title">Products</div>
+                <div class="result-item" *ngFor="let p of filteredProducts" (click)="goToProduct(p)">
+                  <img [src]="p.image || '/img/product/product-1.jpg'" class="result-img" (error)="p.image = '/img/product/product-1.jpg'">
+                  <div class="result-info">
+                    <span class="result-name">{{ p.name }}</span>
+                    <span class="result-meta">SKU: {{ p.sku }} | Category: {{ p.category }}</span>
+                  </div>
+                  <span class="result-badge font-weight-bold">₹{{ p.price }}</span>
+                </div>
+              </div>
+
+              <!-- Orders Section -->
+              <div class="results-section" *ngIf="filteredOrders.length > 0">
+                <div class="section-title">Orders</div>
+                <div class="result-item" *ngFor="let o of filteredOrders" (click)="goToOrder(o)">
+                  <div class="result-icon-wrap"><i class="fa fa-shopping-cart"></i></div>
+                  <div class="result-info">
+                    <span class="result-name">{{ o.orderId }}</span>
+                    <span class="result-meta">Customer: {{ o.shippingAddress?.firstName }} {{ o.shippingAddress?.lastName }}</span>
+                  </div>
+                  <span class="result-badge text-capitalize" [class.badge-pending]="o.status === 'Pending'" [class.badge-shipped]="o.status === 'Shipped'">{{ o.status }}</span>
+                </div>
+              </div>
+
+              <!-- Customers Section -->
+              <div class="results-section" *ngIf="filteredCustomers.length > 0">
+                <div class="section-title">Customers</div>
+                <div class="result-item" *ngFor="let c of filteredCustomers" (click)="goToCustomer(c)">
+                  <div class="result-icon-wrap"><i class="fa fa-user"></i></div>
+                  <div class="result-info">
+                    <span class="result-name">{{ c.name }}</span>
+                    <span class="result-meta">Email: {{ c.email }} | Role: {{ c.role }}</span>
+                  </div>
+                  <span class="result-badge text-capitalize">{{ c.status }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right" style="position: relative;">
+        <!-- Notification Toggle Button -->
+        <button class="header-icon-btn" [class.active]="unreadNotificationsCount > 0 || showNotifications" (click)="toggleNotifications($event)" title="Notifications">
+          <i class="fa fa-bell-o"></i>
+          <span class="badge-dot" *ngIf="unreadNotificationsCount > 0"></span>
+        </button>
+
+        <!-- Premium Notification Dropdown Card -->
+        <div class="notification-dropdown" *ngIf="showNotifications">
+          <div class="dropdown-header">
+            <span class="header-title"><i class="fa fa-bell" style="margin-right: 6px; color: var(--primary-color);"></i>Notifications</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="mark-read-btn" *ngIf="unreadNotificationsCount > 0" (click)="markAllAsRead($event)">
+                Mark all read
+              </button>
+              <button class="enable-notif-btn" 
+                (click)="toggleDesktopNotifications($event)" 
+                [title]="desktopNotificationsEnabled ? 'Disable system notifications' : 'Enable system notifications'"
+                [style.background]="desktopNotificationsEnabled ? '#e53935' : 'var(--primary-color)'">
+                <i [class]="desktopNotificationsEnabled ? 'fa fa-bell-slash' : 'fa fa-bell'"></i>
+                {{ desktopNotificationsEnabled ? 'Disable Alerts' : 'Enable Alerts' }}
+              </button>
+            </div>
+          </div>
+          <div class="dropdown-list">
+            <div class="notification-item" *ngFor="let n of notifications" [class.unread]="n.unread" (click)="handleNotificationClick(n)">
+              <div class="item-icon" [ngClass]="n.type">
+                <i class="fa {{ n.icon }}"></i>
+              </div>
+              <div class="item-content">
+                <div class="item-title-row">
+                  <span class="item-title">{{ n.title }}</span>
+                  <span class="item-time">{{ n.time }}</span>
+                </div>
+                <p class="item-text">{{ n.text }}</p>
+              </div>
+            </div>
+            <div class="no-notifications" *ngIf="notifications.length === 0">
+              <i class="fa fa-bell-slash-o"></i>
+              <p>No new notifications</p>
+              <small>New orders will appear here automatically</small>
+            </div>
+          </div>
+          <div class="dropdown-footer">
+            <a routerLink="/orders" (click)="showNotifications = false">View all orders</a>
+          </div>
+        </div>
+
+        <div class="user-badge">
+          <div class="user-avatar">{{ adminName.charAt(0).toUpperCase() }}</div>
+          <span class="user-name">{{ adminName }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<!-- Custom Premium Logout Confirmation Dialog -->
+<div class="confirm-dialog-backdrop" [class.active]="showLogoutConfirm" (click)="cancelLogout()"></div>
+<div class="confirm-dialog-wrapper" [class.active]="showLogoutConfirm">
+  <div class="confirm-dialog-card">
+    <div class="confirm-dialog-icon" style="color: var(--primary-color); background: var(--primary-bg);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+    </div>
+    <h3 class="confirm-title">Confirm Sign Out</h3>
+    <p class="confirm-text">Are you sure you want to sign out from the Admin Panel?</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" (click)="cancelLogout()">Cancel</button>
+      <button class="btn-confirm" style="background: var(--primary-color);" (click)="confirmLogout()">Sign Out</button>
+    </div>
+  </div>
+</div>

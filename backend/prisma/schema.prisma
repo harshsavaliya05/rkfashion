@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  password    String
+  phone       String?
+  gender      String?
+  dob         String?
+  role        String   @default("Customer") // Customer or Admin
+  joined      String?
+  status      String   @default("active")  // active or blocked
+  totalOrders Int      @default(0)
+  totalSpend  Float    @default(0.0)
+  addresses   Json     @default("[]")      // Array of CustomerAddress
+  cart        Json     @default("[]")      // Array of CartItem objects
+  wishlist    Json     @default("[]")      // Array of ProductItem objects
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  name            String
+  price           Float
+  originalPrice   Float?
+  discountPercent Float?
+  offers          Json     @default("[]")      // Array of strings
+  image           String
+  images          Json     @default("[]")      // Array of strings
+  label           String?
+  rating          Float    @default(0)
+  description     String
+  sizes           Json     @default("[]")      // Array of strings
+  colors          Json     @default("[]")      // Array of ProductColor objects
+  category        String
+  sku             String   @unique
+  status          String   @default("published") // published or draft
+  highlights      Json     @default("[]")      // Array of strings
+  variants        Json     @default("[]")      // Array of variants
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  orderId         String   @unique
+  userEmail       String
+  date            String
+  subtotal        Float
+  discount        Float
+  total           Float
+  paymentMethod   String
+  status          String   @default("Pending")
+  shippingAddress Json
+  items           Json     // OrderItem[]
+  statusHistory   Json     @default("[]")
+  createdAt       DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id             Int      @id @default(autoincrement())
+  customer       String
+  email          String
+  productId      Int
+  productName    String
+  rating         Int
+  text           String
+  date           String
+  helpful        Int      @default(0)
+  helpfulByUsers Json     @default("[]") // Array of emails who marked it helpful
+  photos         Json     @default("[]") // Array of strings (photo URLs)
+  status         String   @default("pending") // approved, pending, rejected
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Banner {
+  id           Int      @id @default(autoincrement())
+  title        String
+  subtitleTag  String
+  description  String
+  seasonLabel  String
+  btnText      String
+  link         String   @default("#")
+  imageUrl     String
+  videoUrl     String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Coupon {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  discountType  String
+  discountValue Float
+  minCartValue  Float    @default(0.0)
+  maxDiscount   Float?
+  description   String
+  expiryDays    Int?     @default(6)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Blog {
+  id          Int      @id @default(autoincrement())
+  title       String
+  author      String   @default("Admin")
+  date        String
+  imageUrl    String
+  category    String
+  content     String
+  quote       String?
+  quoteAuthor String?
+  tags        Json     @default("[]")      // Array of strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  subject   String
+  message   String
+  date      String
+  status    String   @default("unread") // unread, read
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Settings {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogComment {
+  id        Int      @id @default(autoincrement())
+  blogId    Int
+  name      String
+  email     String
+  phone     String
+  text      String
+  date      String
+  createdAt DateTime @default(now())
+}
+
+model AdminProfile {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  password    String
+  phone       String?
+  role        String   @default("Admin") // CEO, Manager, Employee, Admin
+  joined      String?
+  status      String   @default("active")  // active or blocked
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  cursive     String?  @default("")
+  title       String?  @default("")
+  description String?  @default("")
+  imageUrl    String?  @default("")
+  videoUrl    String?  @default("")
+  icon        String?  @default("🛍️")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ReturnExchangeRequest {
+  id             Int      @id @default(autoincrement())
+  requestId      String   @unique
+  orderId        String
+  userEmail      String
+  type           String   // "Return" or "Exchange"
+  items          Json     // Array of items
+  reason         String
+  newSize        String?  // For exchange size
+  refundMethod   String?  // For return refund choice
+  refundDetails  String?  // For UPI / bank info
+  status         String   @default("Pending") // Pending, Approved, Rejected
+  comments       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+

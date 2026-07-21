@@ -1,0 +1,209 @@
+<div class="dashboard-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 style="font-weight: 800; color: #111111; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+        📢 Email Campaigns
+      </h4>
+      <p style="font-size: 13px; color: #64748b; margin: 5px 0 0;">
+        Create and blast promotional emails to all active customers instantly.
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left: Form Creator -->
+    <div class="col-lg-6 mb-4">
+      <div class="bottom-card p-4">
+        <h5 style="font-weight: 700; color: #111111; margin-bottom: 25px; border-bottom: 1px solid #eaeaea; padding-bottom: 12px;">
+          Campaign Details
+        </h5>
+
+        <form (ngSubmit)="blastCampaign()" #campaignForm="ngForm">
+          <!-- Subject Line -->
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333;">
+              Email Subject Line <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="e.g. 🎉 Special Festive Sale - 10% OFF Everything!"
+              [(ngModel)]="subject"
+              name="subject"
+              required>
+          </div>
+
+          <!-- Main Title -->
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333;">
+              Email Banner Title <span class="text-danger">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="e.g. Diwali Festive Offer is Live!"
+              [(ngModel)]="title"
+              name="title"
+              required>
+          </div>
+
+          <!-- Campaign Banner Image Upload -->
+          <div class="form-group mb-3">
+            <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333; display: block; width: 100%;">
+              Campaign Banner Image
+            </label>
+            
+            <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 12px; height: 42px;">
+              <input 
+                type="file" 
+                #fileInput 
+                style="display: none;" 
+                (change)="onFileSelected($event)" 
+                accept="image/*">
+              <button 
+                type="button" 
+                class="btn btn-dark d-flex align-items-center justify-content-center"
+                style="border-radius: 4px; padding: 0 14px; font-size: 11px; font-weight: 600; cursor: pointer; height: 30px; border: none; background: #111111; color: #ffffff;"
+                (click)="fileInput.click()"
+                [disabled]="isUploading">
+                <span *ngIf="!isUploading">
+                  <i class="fa fa-image" style="margin-right: 6px;"></i> Choose File
+                </span>
+                <span *ngIf="isUploading" class="d-flex align-items-center">
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 10px; height: 10px; border-width: 0.1em; margin-right: 6px; color: #ffffff;"></span>
+                  Uploading...
+                </span>
+              </button>
+              <span class="text-truncate" style="font-size: 11.5px; color: #64748b; font-family: 'Outfit'; flex: 1;">
+                {{ uploadStatusText }}
+              </span>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Discount Percent -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333;">
+                Discount Percent (Optional)
+              </label>
+              <input 
+                type="number" 
+                class="form-control" 
+                placeholder="e.g. 10"
+                [(ngModel)]="discountPercent"
+                name="discountPercent"
+                min="1"
+                max="100">
+            </div>
+
+            <!-- Call to Action Button Text -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333;">
+                Button Text (Optional)
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                placeholder="e.g. Shop Collection"
+                [(ngModel)]="buttonText"
+                name="buttonText">
+            </div>
+          </div>
+
+          <!-- Campaign Description -->
+          <div class="form-group mb-4">
+            <label class="form-label" style="font-weight: 600; font-size: 13px; color: #333333;">
+              Campaign Description Text <span class="text-danger">*</span>
+            </label>
+            <textarea 
+              class="form-control" 
+              rows="6" 
+              placeholder="Write the promotional description message here..."
+              [(ngModel)]="description"
+              name="description"
+              required></textarea>
+          </div>
+
+          <!-- Action Button -->
+          <button 
+            type="submit" 
+            class="primary-btn w-100 d-flex align-items-center justify-content-center"
+            [disabled]="isSending"
+            style="border-radius: 8px !important; height: 50px;">
+            <span *ngIf="!isSending">
+              <i class="fa fa-paper-plane" style="margin-right: 8px;"></i> BLAST CAMPAIGN EMAIL
+            </span>
+            <span *ngIf="isSending" class="d-flex align-items-center">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="margin-right: 8px;"></span>
+              SENDING EMAILS...
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: Live Email Preview -->
+    <div class="col-lg-6 mb-4">
+      <div class="bottom-card p-4">
+        <h5 style="font-weight: 700; color: #111111; margin-bottom: 25px; border-bottom: 1px solid #eaeaea; padding-bottom: 12px;">
+          Live Email Preview
+        </h5>
+        
+        <div class="email-mock-container">
+          <div class="email-mock-header">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+            <div class="subject-bar">Subject: {{ subject || '(Enter subject line to preview)' }}</div>
+          </div>
+          
+          <div class="email-mock-body" style="padding: 0; overflow: hidden; border-radius: 8px;">
+            <!-- Brand Logo Header Banner -->
+            <div class="email-mock-logo-banner">
+              RK FASHION
+            </div>
+            
+            <!-- Beautiful Fashion Campaign Image -->
+            <div class="email-mock-hero-image" *ngIf="imageUrl" style="overflow: hidden;">
+              <img [src]="imageUrl" alt="Promo Campaign" style="display: block; width: 100%; height: auto;">
+            </div>
+            
+            <div class="email-mock-padding-box" style="padding: 25px;">
+              <!-- Email Title -->
+              <h2 class="email-mock-title">
+                {{ title || 'YOUR FESTIVAL SALE TITLE' }}
+              </h2>
+              
+              <!-- Salutation -->
+              <p class="email-mock-salutation">Hi Customer Name,</p>
+              
+              <!-- Description -->
+              <p class="email-mock-description">{{ description || 'Your promotional campaign description will be displayed here. Inform your customers about the special festival details, new arrivals, discount terms and conditions.' }}</p>
+              
+              <!-- Discount Badge Box -->
+              <div class="email-mock-discount-box" *ngIf="discountPercent">
+                <span class="offer-label">Special Offer</span>
+                <strong class="offer-amount">{{ discountPercent }}% OFF</strong>
+                <span class="offer-subtext">Applied automatically to all products!</span>
+              </div>
+              
+              <!-- CTA Button -->
+              <div class="text-center my-4">
+                <a class="email-mock-btn">
+                  {{ buttonText || 'Shop Collection' }}
+                </a>
+              </div>
+              
+              <div class="email-mock-footer-text" style="text-align: center; color: #64748b; font-size: 11.5px; line-height: 1.5; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <p style="margin: 0 0 8px;">Enjoy free shipping on orders above ₹999. Easy 7-day return & exchange.</p>
+                <p style="font-size: 9.5px; color: #94a3b8; margin: 0;">
+                  You are receiving this promotional email because you are a registered customer of RK Fashion.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

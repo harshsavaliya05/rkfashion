@@ -1,0 +1,400 @@
+<div class="dashboard-container">
+  <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="gap: 15px;">
+    <div style="flex: 1; min-width: 280px;">
+      <h4 style="font-weight: 700; color: #111111; margin: 0;">{{ isEditMode ? 'Edit Product Specification' : 'Add New Product' }}</h4>
+      <p style="color: #777777; font-size: 13px; margin: 0;">Configure full product variables: pricing, discounts, sizing inventory, and dynamic color galleries.</p>
+    </div>
+    <div style="margin-left: auto; text-align: right;">
+      <a routerLink="/products" style="color: #777777; text-decoration: none; font-size: 13px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fa fa-arrow-left"></i> Back to Inventory
+      </a>
+    </div>
+  </div>
+
+  <form (submit)="$event.preventDefault()">
+    <div class="row">
+      <!-- Left Column: Form Fields -->
+      <div class="col-lg-8 col-md-12">
+        <!-- 1. Basic Specifications -->
+        <div class="bottom-card mb-4" style="padding: 25px;">
+          <h5 style="font-weight: 700; color: #111111; margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;">
+            <i class="fa fa-info-circle" style="color: var(--primary-color); margin-right: 8px;"></i> Basic Details & Category
+          </h5>
+          <div class="row">
+            <!-- Product Name -->
+            <div class="col-lg-4 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Product Name</mat-label>
+                <input matInput [(ngModel)]="name" name="name" placeholder="e.g. Premium Cotton Solid Shirt" required>
+              </mat-form-field>
+            </div>
+
+            <!-- Category -->
+            <div class="col-lg-4 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Category</mat-label>
+                <mat-select [(ngModel)]="category" name="category" required>
+                  <mat-option *ngFor="let cat of categories" [value]="cat.value">
+                    {{ cat.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- SKU Code -->
+            <div class="col-lg-4 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>SKU Code</mat-label>
+                <input matInput [(ngModel)]="sku" name="sku" placeholder="e.g. RK-PCS-001">
+              </mat-form-field>
+            </div>
+
+            <!-- Base Price -->
+            <div class="col-lg-4 col-md-4 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Base Price (Original Price ₹)</mat-label>
+                <input matInput type="number" [(ngModel)]="basePrice" name="basePrice" placeholder="e.g. 1999" required (change)="syncVariants()">
+              </mat-form-field>
+            </div>
+
+            <!-- Discount Percentage -->
+            <div class="col-lg-4 col-md-4 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Discount Percentage (%)</mat-label>
+                <input matInput type="number" [(ngModel)]="discountPercent" name="discountPercent" placeholder="e.g. 25" min="0" max="100" (change)="syncVariants()">
+              </mat-form-field>
+            </div>
+
+            <!-- Calculated Selling Price -->
+            <div class="col-lg-4 col-md-4 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Calculated Selling Price (₹)</mat-label>
+                <input matInput [value]="calculatedDiscountPrice" name="calculatedDiscountPrice" readonly style="font-weight: 700; color: #3d4f35;">
+              </mat-form-field>
+            </div>
+
+            <!-- Description -->
+            <div class="col-lg-6 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Main Description</mat-label>
+                <textarea matInput [(ngModel)]="description" name="description" placeholder="Main detailed product description..." rows="4"></textarea>
+              </mat-form-field>
+            </div>
+
+            <!-- Highlights -->
+            <div class="col-lg-6 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Product Highlights (One bullet point per line)</mat-label>
+                <textarea matInput [(ngModel)]="highlights" name="highlights" placeholder="e.g.&#10;Premium quality fabric&#10;Regular fit&#10;Wash inside out" rows="4"></textarea>
+              </mat-form-field>
+            </div>
+
+            <!-- Product Label Badge -->
+            <div class="col-lg-4 col-md-6 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Product Badge / Label (e.g. Sale, New, Hot)</mat-label>
+                <input matInput [(ngModel)]="label" name="label" placeholder="Leave empty for none">
+              </mat-form-field>
+            </div>
+
+
+
+            <!-- Promotional Offers -->
+            <div class="col-lg-12 col-md-12 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Promotional Offers (One offer per line)</mat-label>
+                <textarea matInput [(ngModel)]="offers" name="offers" placeholder="e.g.&#10;Buy 2 Get 10% Off&#10;Free shipping over ₹999" rows="4"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Colors and Color Specific Images -->
+        <div class="bottom-card mb-4" style="padding: 25px;">
+          <h5 style="font-weight: 700; color: #111111; margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;">
+            <i class="fa fa-paint-brush" style="color: var(--primary-color); margin-right: 8px;"></i> Colors & Color-specific Images
+          </h5>
+          
+          <div class="row align-items-center mb-4">
+            <!-- Color Name Input -->
+            <div class="col-md-4 mb-2">
+              <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                <mat-label>Color Name</mat-label>
+                <input matInput [(ngModel)]="newColorName" name="newColorName" placeholder="e.g. Navy Blue, Olive Green">
+              </mat-form-field>
+            </div>
+
+            <!-- Hex Code/Color Preview Input -->
+            <div class="col-md-4 mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <input type="color" [(ngModel)]="newColorHex" name="newColorHex" style="width: 56px; height: 56px; padding: 2px; border: 1px solid #eaeaea; border-radius: 6px; cursor: pointer; flex-shrink: 0;">
+                <mat-form-field appearance="outline" style="flex: 1; margin-bottom: 0;" subscriptSizing="dynamic">
+                  <mat-label>Hex Code</mat-label>
+                  <input matInput [(ngModel)]="newColorHex" name="newColorHexText">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Add Color Button -->
+            <div class="col-md-4 mb-2 text-right">
+              <button type="button" class="primary-btn w-100" (click)="addColor()" style="padding: 0 20px !important; border-radius: 6px !important; height: 56px; line-height: 56px;">
+                + Add Color Option
+              </button>
+            </div>
+          </div>
+
+          <div class="colors-list-wrapper">
+            <div class="color-item-card" *ngFor="let col of colors; let cIdx = index">
+              <div class="color-header">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <span class="color-badge-preview" [style.background-color]="col.hex"></span>
+                  <strong>{{ col.name }}</strong>
+                  <span class="text-muted">({{ col.class }} style)</span>
+                  
+                  <label class="form-check-label ml-3 mb-0" style="font-size: 11px; font-weight: 700; cursor: pointer; color: #3d4f35; display: inline-flex; align-items: center; gap: 5px;">
+                    <input type="radio" name="defaultColorRadio" [value]="col.name" [(ngModel)]="defaultColorName" (change)="syncVariants()">
+                    Set as Default Color
+                  </label>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeColor(cIdx)">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+              </div>
+              
+              <div class="row mt-3">
+                <!-- Color Default Image -->
+                <div class="col-lg-3 col-md-4">
+                  <label class="form-label font-weight-normal text-muted" style="font-size: 11px;">Default Image (This Color)</label>
+                  <div class="image-uploader-box" (click)="triggerDemoImage('colorMain', cIdx)" style="height: 100px; cursor: pointer;">
+                    <img *ngIf="col.mainImage" [src]="col.mainImage" alt="Color Main Preview" class="img-fluid rounded">
+                    <div *ngIf="!col.mainImage" class="upload-placeholder" style="gap: 5px;">
+                      <i class="fa fa-picture-o" style="font-size: 20px;"></i>
+                      <span style="font-size: 10px;">Select Default</span>
+                    </div>
+                  </div>
+                  
+                  <!-- File Uploader Button (Same style as banners) -->
+                  <div class="d-flex gap-2 align-items-center mt-2">
+                    <input 
+                      type="file" 
+                      #fileInputMain 
+                      style="display: none;" 
+                      (change)="uploadProductImage($event, 'colorMain', cIdx)" 
+                      accept="image/*">
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-dark d-flex align-items-center justify-content-center"
+                      style="border-radius: 6px; padding: 0 8px; font-size: 10.5px; font-weight: 600; border: 1.5px solid #111; cursor: pointer; height: 30px; width: 100%;"
+                      (click)="fileInputMain.click()">
+                      <i class="fa fa-upload" style="margin-right: 4px;"></i> Upload File
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Color Gallery Images -->
+                <div class="col-lg-9 col-md-8">
+                  <label class="form-label font-weight-normal text-muted" style="font-size: 11px;">Other Gallery Images (This Color)</label>
+                  <div class="gallery-preview-row">
+                    <div class="gallery-item-preview" *ngFor="let cImg of col.images; let imgIdx = index" style="width: 75px; height: 75px;">
+                      <img [src]="cImg" class="img-fluid rounded">
+                      <button type="button" class="btn-remove-img" (click)="removeColorImage(cIdx, imgIdx)">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </div>
+                    <div class="gallery-item-add" (click)="fileInputGallery.click()" style="width: 75px; height: 75px; cursor: pointer;">
+                      <input 
+                        type="file" 
+                        #fileInputGallery 
+                        style="display: none;" 
+                        (change)="uploadProductImage($event, 'colorGallery', cIdx)" 
+                        accept="image/*">
+                      <i class="fa fa-plus" style="font-size: 14px; margin-bottom: 3px;"></i>
+                      <span style="font-size: 9px;">Add Image</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Sizing selection per Color -->
+              <div class="color-sizes-section mt-3" style="border-top: 1px dashed #eaeaea; padding-top: 15px;">
+                <label class="form-label font-weight-normal text-muted" style="font-size: 11px; margin-bottom: 8px;">Select Active Sizes for {{ col.name }}:</label>
+                <div class="sizes-toggle-row">
+                  <button type="button" *ngFor="let sz of availableSizes" 
+                          class="btn-size-toggle" 
+                          [class.active]="isColorSizeActive(cIdx, sz)"
+                          (click)="toggleColorSizeActive(cIdx, sz)"
+                          style="height: 32px; min-width: 38px; font-size: 11px; border-radius: 4px; padding: 2px;">
+                    {{ sz }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Variant Matrix Sizing, Price & Quantity -->
+        <div class="bottom-card mb-5" style="padding: 25px;">
+          <div class="d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #eaeaea; padding-bottom: 10px;">
+            <h5 style="font-weight: 700; color: #111111; margin: 0;">
+              <i class="fa fa-sliders" style="color: var(--primary-color); margin-right: 8px;"></i> Sizing & Variant Stock Specifications
+            </h5>
+            <button type="button" class="btn btn-sm btn-outline-secondary" *ngIf="variants.length > 0" (click)="applyMainPriceToAll()">
+              Apply Main Price to All Variants
+            </button>
+          </div>
+          
+          <p style="color: #777777; font-size: 13px; margin-bottom: 20px;">
+            Here is the automatically generated variant matrix for the selected sizes under each color. Enter stock and custom pricing details below.
+          </p>
+
+          <!-- Cartesian Variant Matrix Table -->
+          <div class="table-responsive" *ngIf="variants.length > 0">
+            <table class="table table-bordered">
+              <thead style="background: #f8fafc;">
+                <tr>
+                  <th>Variant (Color & Size)</th>
+                  <th style="width: 150px;">Base Price (₹)</th>
+                  <th style="width: 120px;">Discount (%)</th>
+                  <th style="width: 150px;">Calculated Selling Price (₹)</th>
+                  <th style="width: 130px;">Stock Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let v of variants; let vIdx = index">
+                  <!-- Variant Label -->
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="color-badge-preview" [style.background-color]="v.colorHex" style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid #eaeaea;"></span>
+                      <strong>{{ v.colorName }}</strong>
+                      <span class="size-badge ml-2" style="padding: 2px 8px; font-size: 11px;">{{ v.size }}</span>
+                    </div>
+                  </td>
+                  <!-- Base Price -->
+                  <td class="align-middle">
+                    <input type="number" class="form-control" [(ngModel)]="v.basePrice" name="var_price_{{vIdx}}" style="height: 38px; font-size: 13px;" required>
+                  </td>
+                  <!-- Discount Percent -->
+                  <td class="align-middle">
+                    <input type="number" class="form-control" [(ngModel)]="v.discountPercent" name="var_disc_{{vIdx}}" style="height: 38px; font-size: 13px;" min="0" max="100">
+                  </td>
+                  <!-- Calculated Price -->
+                  <td class="align-middle">
+                    <input type="text" class="form-control text-muted" [value]="getVariantSellingPrice(v)" readonly style="height: 38px; font-size: 13px; background-color: #f8fafc; font-weight: 700; cursor: not-allowed;">
+                  </td>
+                  <!-- Stock -->
+                  <td class="align-middle">
+                    <input type="number" class="form-control" [(ngModel)]="v.stock" name="var_stock_{{vIdx}}" style="height: 38px; font-size: 13px;" required>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div *ngIf="variants.length === 0" class="text-center py-4" style="background: #faf8f5; border-radius: 8px; border: 1px dashed #ccc; color: #777777;">
+            No active variants found. Make sure you have added at least one Color in Section 3 and toggled at least one active Size above.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Client-Side Preview Card -->
+      <div class="col-lg-4 col-md-12">
+        <div class="sticky-top-preview" style="position: sticky; top: 90px; z-index: 100; margin-bottom: 30px;">
+          <h5 style="font-weight: 700; color: #111111; margin-bottom: 15px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">
+            <i class="fa fa-eye" style="color: var(--primary-color); margin-right: 5px;"></i> Live Store Preview
+          </h5>
+          
+          <!-- Mockup Card matching Client-Side Style -->
+          <!-- Mockup Card matching Client-Side Style (Visible only when form is valid) -->
+          <div *ngIf="isFormValid()" class="new-product-card">
+            <div class="new-product-card-top">
+              <img [src]="activePreviewColor ? (activePreviewColor.mainImage || '/img/product/product-1.jpg') : '/img/product/product-1.jpg'" class="new-product-img" alt="Product Image">
+              <!-- Floating Badge -->
+              <span *ngIf="label" class="new-product-badge">{{ label }}</span>
+              <span *ngIf="!label && getPreviewPrice().discount" class="new-product-badge">{{ getPreviewPrice().discount }}% OFF</span>
+              <button type="button" class="heart-btn">
+                  <i class="fa fa-heart-o"></i>
+              </button>
+            </div>
+            
+            <div class="new-product-card-bottom">
+              <h3 class="new-product-title">{{ name || 'Product Title Placeholder' }}</h3>
+              <div class="new-product-qty-price">
+                  <span class="new-product-price">₹{{ getPreviewPrice().price.toLocaleString() }}
+                      <span *ngIf="getPreviewPrice().discount" class="old-price">₹{{ getPreviewPrice().original.toLocaleString() }}</span>
+                  </span>
+              </div>
+
+              <div class="new-product-colors" *ngIf="colors.length > 0">
+                  <span class="color-label">COLOR:</span>
+                  <span *ngFor="let col of colors; let idx = index" 
+                        class="color-dot" 
+                        [style.background-color]="col.hex" 
+                        [class.active]="previewColorIdx === idx"
+                        (click)="previewColorIdx = idx; $event.preventDefault(); $event.stopPropagation();"
+                        style="cursor: pointer; transition: transform 0.2s;"
+                        [style.transform]="previewColorIdx === idx ? 'scale(1.25)' : 'none'"
+                        [style.border]="previewColorIdx === idx ? '1.5px solid #3d4f35' : '1px solid rgba(255,255,255,0.3)'"
+                        [attr.data-tooltip]="col.name">
+                  </span>
+              </div>
+              <div class="new-product-actions">
+                  <button type="button" class="add-to-cart-btn">ADD TO CART</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checklist Placeholder (Visible only when form is invalid) -->
+          <div *ngIf="!isFormValid()" class="shop-custom-card-placeholder" style="background: #faf8f5; border: 1.5px dashed #cccccc; border-radius: 12px; height: 380px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; flex-direction: column; font-family: 'Outfit', sans-serif;">
+            <i class="fa fa-eye-slash" style="font-size: 32px; color: #bbbbbb; margin-bottom: 12px;"></i>
+            <h6 style="font-weight: 700; color: #333333; margin-bottom: 5px;">Live Preview Not Available</h6>
+            <p style="font-size: 11px; color: #777777; margin: 0 0 15px 0; line-height: 1.4;">Please fill all required basic fields and add at least one color with sizes to see live preview.</p>
+            <div class="text-left" style="font-size: 11px; color: #666666; background: #ffffff; padding: 12px 15px; border-radius: 8px; border: 1px solid #eaeaea; width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+              <strong style="display: block; margin-bottom: 8px; color: #111111; font-weight: 700; font-size: 12px;">Required Items Checklist:</strong>
+              <ul style="margin: 0; padding-left: 18px; line-height: 1.6; list-style-type: none;">
+                <li [style.color]="name && name.trim() ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="name && name.trim()" [class.fa-times-circle]="!name || !name.trim()"></i> Product Name
+                </li>
+                <li [style.color]="category ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="category" [class.fa-times-circle]="!category"></i> Category
+                </li>
+                <li [style.color]="basePrice && basePrice > 0 ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="basePrice && basePrice > 0" [class.fa-times-circle]="!basePrice || basePrice <= 0"></i> Base Price (> 0)
+                </li>
+                <li [style.color]="sku && sku.trim() ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="sku && sku.trim()" [class.fa-times-circle]="!sku || !sku.trim()"></i> SKU Code
+                </li>
+                <li [style.color]="description && description.trim() ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="description && description.trim()" [class.fa-times-circle]="!description || !description.trim()"></i> Description
+                </li>
+                <li [style.color]="colors.length > 0 ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="colors.length > 0" [class.fa-times-circle]="colors.length === 0"></i> At least 1 Color Variant
+                </li>
+                <li [style.color]="colorsHaveImages() ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="colorsHaveImages()" [class.fa-times-circle]="!colorsHaveImages()"></i> Primary Image for each Color
+                </li>
+                <li [style.color]="variants.length > 0 ? '#2e7d32' : '#c62828'">
+                  <i class="fa" [class.fa-check-circle]="variants.length > 0" [class.fa-times-circle]="variants.length === 0"></i> At least 1 Size active
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Section -->
+    <div class="text-right">
+      <a routerLink="/products" class="btn btn-light mr-3" style="padding: 12px 25px; border-radius: 6px; font-weight: 600; font-family: 'Outfit';">Cancel</a>
+      
+      <!-- Save Draft Button -->
+      <button type="button" class="btn btn-outline-secondary mr-3" [disabled]="!isFormValid()" (click)="saveProduct('draft')" style="padding: 12px 25px; border-radius: 6px; font-weight: 600; font-family: 'Outfit';">
+        <i class="fa fa-save"></i> Save Draft
+      </button>
+
+      <!-- Publish Now Button -->
+      <button type="button" class="primary-btn" [disabled]="!isFormValid()" (click)="saveProduct('published')" style="padding: 12px 30px !important; border-radius: 6px !important;">
+        <i class="fa fa-paper-plane"></i> {{ isEditMode ? 'Update & Publish' : 'Publish Now' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,315 @@
+<!-- Breadcrumb -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="breadcrumb__text">
+            <h4>Men's Wear</h4>
+            <div class="breadcrumb__links">
+                <a routerLink="/">Home</a>
+                <span>Men's Wear</span>
+                @if (selectedCategory !== 'All') {
+                    <span>{{ selectedCategory }}</span>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile Filter Toggle -->
+<div class="container">
+    <div class="mobile__filter__row">
+        <button class="mobile__filter__btn" (click)="toggleSidebar()">
+            <i class="fa fa-sliders"></i>
+            Filters
+            @if (activeFilterCount > 0) {
+                <span class="mobile__filter__badge">{{ activeFilterCount }}</span>
+            }
+        </button>
+        <div class="mobile__sort__wrap">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sort-material-field" style="width: 100%;">
+                <mat-select [(ngModel)]="sortBy" name="sortByMobile">
+                    <mat-option value="default">Sort: Popularity</mat-option>
+                    <mat-option value="price-asc">Price: Low → High</mat-option>
+                    <mat-option value="price-desc">Price: High → Low</mat-option>
+                    <mat-option value="rating">Top Rated</mat-option>
+                    <mat-option value="discount">Highest Discount</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar Overlay (mobile) -->
+@if (sidebarOpen) {
+    <div class="sidebar__overlay" (click)="closeSidebar()"></div>
+}
+
+<!-- Sidebar Drawer (mobile) -->
+<div class="sidebar__drawer" [class.open]="sidebarOpen">
+    <div class="sidebar__drawer__header">
+        <span>Filters</span>
+        <button (click)="closeSidebar()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="sidebar__drawer__body">
+        <ng-container *ngTemplateOutlet="sidebarContent"></ng-container>
+    </div>
+</div>
+
+<section class="shop spad">
+    <div class="container">
+        <div class="row">
+
+            <!-- ═══ SIDEBAR (desktop only) ═══ -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="shop__sidebar__desktop">
+                    <ng-container *ngTemplateOutlet="sidebarContent"></ng-container>
+                </div>
+            </div>
+
+            <!-- ═══ PRODUCT AREA ═══ -->
+            <div class="col-lg-9 col-12">
+
+                <!-- Shop Content Search (Visible Everywhere) -->
+                <div class="shop__search__container">
+                    <div class="shop__search__wrapper">
+                        <i class="fa fa-search shop__search__icon"></i>
+                        <input type="text" 
+                               [(ngModel)]="searchQuery" 
+                               name="shopMainSearch" 
+                               placeholder="Search for shirts, cargo pants, hoodies, brands..." 
+                               class="shop__search__input">
+                        @if (searchQuery.trim()) {
+                            <button class="shop__search__clear" (click)="searchQuery = ''; currentPage = 1;">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Active Filter Tags -->
+                @if (activeFilterCount > 0) {
+                    <div class="active__filters">
+                        <span class="active__filters__title">Filters:</span>
+                        @if (selectedCategory !== 'All') {
+                            <span class="filter__chip" (click)="setCategory('All')">
+                                {{ selectedCategory }} <i class="fa fa-times"></i>
+                            </span>
+                        }
+                        @if (selectedPriceRange) {
+                            <span class="filter__chip" (click)="setPriceRange(selectedPriceRange)">
+                                {{ selectedPriceRange.label }} <i class="fa fa-times"></i>
+                            </span>
+                        }
+                        @for (sz of selectedSizes; track sz) {
+                            <span class="filter__chip" (click)="removeSize(sz)">
+                                Size: {{ sz }} <i class="fa fa-times"></i>
+                            </span>
+                        }
+                        @for (clr of selectedColors; track clr) {
+                            <span class="filter__chip" (click)="removeColor(clr)">
+                                {{ getColorName(clr) }} <i class="fa fa-times"></i>
+                            </span>
+                        }
+                        <span class="filter__chip filter__chip--clear" (click)="clearAllFilters()">
+                            Clear All
+                        </span>
+                    </div>
+                }
+
+                <!-- Desktop Top Bar -->
+                <div class="shop__topbar d-none d-lg-flex">
+                    <div class="topbar__count">
+                        <strong>{{ filteredProducts.length }}</strong> products
+                        @if (selectedCategory !== 'All') { in <strong>{{ selectedCategory }}</strong> }
+                    </div>
+                    <div class="topbar__sort">
+                        <label>Sort by:</label>
+                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="sort-material-field" style="width: 170px;">
+                            <mat-select [(ngModel)]="sortBy" name="sortByDesktop">
+                                <mat-option value="default">Popularity</mat-option>
+                                <mat-option value="price-asc">Price: Low → High</mat-option>
+                                <mat-option value="price-desc">Price: High → Low</mat-option>
+                                <mat-option value="rating">Top Rated</mat-option>
+                                <mat-option value="discount">Highest Discount</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Quick Category Chips -->
+                <div class="quick__cat__bar d-none d-lg-flex">
+                    @for (cat of categories; track cat.key) {
+                        <button class="quick__cat__btn"
+                            [class.active]="selectedCategory === cat.key"
+                            (click)="setCategory(cat.key)">
+                            {{ cat.label }}
+                            @if (cat.key !== 'All') {
+                                <span class="quick__cat__count">({{ cat.count }})</span>
+                            }
+                        </button>
+                    }
+                </div>
+
+                <!-- Product Count (mobile, below quick bar) -->
+                <div class="mobile__product__count d-lg-none">
+                    {{ filteredProducts.length }} products found
+                </div>
+
+                <!-- Product Grid -->
+                <div class="row product__grid__row">
+                    @if (filteredProducts.length === 0) {
+                        <div class="col-12">
+                            <div class="no__results">
+                                <div class="no__results__icon"><i class="fa fa-search"></i></div>
+                                <h5>No Products Found</h5>
+                                <p>Try adjusting your filters or search keyword.</p>
+                                <button class="primary-btn" (click)="clearAllFilters()">Clear Filters</button>
+                            </div>
+                        </div>
+                    }
+
+                    @for (product of paginatedProducts; track product.id) {
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-6" style="margin-bottom: 30px;">
+                            <div class="new-product-card">
+                                <div class="new-product-card-top" [routerLink]="['/shop-details', product.id]">
+                                    <img [src]="product.image" class="new-product-img" [alt]="product.name">
+                                    @if (product.label) {
+                                        <span class="new-product-badge">{{ product.label }}</span>
+                                    } @else if (product.discountPercent) {
+                                        <span class="new-product-badge">{{ product.discountPercent }}% OFF</span>
+                                    }
+                                    <button class="heart-btn" [class.active]="isInWishlist(product.id)" (click)="toggleWishlist(product, $event)">
+                                        <i class="fa" [class.fa-heart]="isInWishlist(product.id)" [class.fa-heart-o]="!isInWishlist(product.id)"></i>
+                                    </button>
+                                </div>
+                                <div class="new-product-card-bottom">
+                                    <h3 class="new-product-title" [routerLink]="['/shop-details', product.id]">{{ product.name }}</h3>
+                                    <div class="new-product-qty-price">
+                                        <span class="new-product-price">₹{{ product.price.toLocaleString() }}
+                                            @if (product.originalPrice) {
+                                                <span class="old-price">₹{{ product.originalPrice.toLocaleString() }}</span>
+                                            }
+                                        </span>
+                                    </div>
+
+                                    <div class="new-product-colors">
+                                        <span class="color-label">COLOR:</span>
+                                        @for (color of product.colors.slice(0, 5); track color.name) {
+                                            <span class="color-dot" [style.background-color]="color.hex" [attr.data-tooltip]="color.name"></span>
+                                        }
+                                    </div>
+                                    <div class="new-product-actions">
+                                        <button class="add-to-cart-btn" (click)="addToCart(product, $event)">ADD TO CART</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (totalPages > 1) {
+                    <div class="shop__pagination">
+                        @for (page of getPagesArray(); track page) {
+                            <button class="page__btn" [class.active]="currentPage === page" (click)="setPage(page)">
+                                {{ page }}
+                            </button>
+                        }
+                        @if (currentPage < totalPages) {
+                            <button class="page__btn next" (click)="setPage(currentPage + 1)">
+                                Next <i class="fa fa-chevron-right"></i>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SIDEBAR TEMPLATE ═══ -->
+<ng-template #sidebarContent>
+
+    <!-- Category -->
+    <div class="sidebar__block">
+        <div class="sidebar__block__title"><i class="fa fa-tags"></i> Category</div>
+
+        <div class="cat__item" [class.active]="selectedCategory === 'All'" (click)="setCategory('All'); closeSidebar()">
+            <span class="cat__label">All Products</span>
+            <span class="cat__badge">{{ allProducts.length }}</span>
+        </div>
+
+        <div class="cat__group__title">Collections</div>
+        @for (cat of categories; track cat.key) {
+            @if (cat.key !== 'All') {
+                <div class="cat__item cat__item--child"
+                    [class.active]="selectedCategory === cat.key"
+                    (click)="setCategory(cat.key); closeSidebar()">
+                    <span class="cat__dot"></span>
+                    <span class="cat__label">{{ cat.label }}</span>
+                    <span class="cat__badge">{{ cat.count }}</span>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Price Range -->
+    <div class="sidebar__block">
+        <div class="sidebar__block__title"><i class="fa fa-inr"></i> Price Range</div>
+        <ul class="price__list">
+            @for (range of priceRanges; track range.label) {
+                <li [class.active]="selectedPriceRange === range" (click)="setPriceRange(range)">
+                    <span class="price__radio__dot"></span>
+                    {{ range.label }}
+                </li>
+            }
+        </ul>
+    </div>
+
+    <!-- Size -->
+    <div class="sidebar__block">
+        <div class="sidebar__block__title"><i class="fa fa-expand"></i> Size</div>
+        <div class="size__group__label">Topwear</div>
+        <div class="size__grid">
+            @for (size of topSizes; track size) {
+                <span class="size__btn" [class.active]="isSizeSelected(size)" (click)="toggleSize(size)">{{ size }}</span>
+            }
+        </div>
+        <div class="size__group__label" style="margin-top:12px;">Bottomwear (inches)</div>
+        <div class="size__grid">
+            @for (size of bottomSizes; track size) {
+                <span class="size__btn" [class.active]="isSizeSelected(size)" (click)="toggleSize(size)">{{ size }}</span>
+            }
+        </div>
+    </div>
+
+    <!-- Color -->
+    <div class="sidebar__block">
+        <div class="sidebar__block__title"><i class="fa fa-circle"></i> Color</div>
+        <div class="color__swatches">
+            @for (color of colors; track color.key) {
+                <div class="color__swatch__wrap" (click)="toggleColor(color.key)" [title]="color.name">
+                    <span class="color__swatch"
+                        [style.background]="color.hex"
+                        [class.active]="isColorSelected(color.key)"
+                        [style.border]="color.key === 'white' ? '1.5px solid #ccc' : '1.5px solid transparent'">
+                        @if (isColorSelected(color.key)) {
+                            <i class="fa fa-check" [style.color]="color.key === 'white' ? '#333' : '#fff'"></i>
+                        }
+                    </span>
+                    <span class="color__label">{{ color.name }}</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Clear All -->
+    @if (activeFilterCount > 0) {
+        <div class="sidebar__block">
+            <button class="btn__clear__filters" (click)="clearAllFilters()">
+                <i class="fa fa-refresh"></i> Clear All Filters
+            </button>
+        </div>
+    }
+
+</ng-template>

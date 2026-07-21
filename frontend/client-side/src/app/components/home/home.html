@@ -1,0 +1,274 @@
+<!-- Hero Section Begin -->
+<section class="hero">
+    <div class="hero__slider owl-carousel">
+        @for (slide of banners; track slide.id) {
+        <!-- Video Banner -->
+        @if (slide.videoUrl) {
+        <div class="hero__items" style="position: relative; overflow: hidden; background: #111;">
+            <video autoplay [muted]="true" playsinline
+                [id]="'hero-video-' + slide.id"
+                [src]="getSafeVideoUrl(slide.videoUrl)"
+                (ended)="onVideoEnded()"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+            </video>
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.45); z-index: 1;"></div>
+            <div class="container" style="position: relative; z-index: 2;">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-7 col-md-8 col-12">
+                        <div class="hero__text luxury-hero-text">
+                            <span class="hero-subtitle-tag">{{ slide.subtitleTag }}</span>
+                            <h2>{{ slide.title }}</h2>
+                            <p class="hero-desc">{{ slide.description }}</p>
+                            <span class="hero-timing">{{ slide.seasonLabel }}</span>
+                            <div class="hero-btn-group">
+                                <a [routerLink]="slide.link" class="luxury-btn">{{ slide.btnText }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        } @else {
+        <!-- Image Banner -->
+        <div class="hero__items set-bg" [attr.data-setbg]="slide.imageUrl">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-7 col-md-8 col-12">
+                        <div class="hero__text luxury-hero-text">
+                            <span class="hero-subtitle-tag">{{ slide.subtitleTag }}</span>
+                            <h2>{{ slide.title }}</h2>
+                            <p class="hero-desc">{{ slide.description }}</p>
+                            <span class="hero-timing">{{ slide.seasonLabel }}</span>
+                            <div class="hero-btn-group">
+                                <a [routerLink]="slide.link" class="luxury-btn">{{ slide.btnText }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+        }
+    </div>
+</section>
+<!-- Hero Section End -->
+
+
+<!-- NEW IN Section -->
+<section class="luxury-section container">
+    <div class="luxury-section-header">
+        <h2>NEW IN</h2>
+        <a routerLink="/shop" class="view-all-link">VIEW ALL <i class="fa fa-angle-right"></i></a>
+    </div>
+    <div class="row">
+        @for (product of newInProducts; track product.id) {
+        <div class="col-lg-3 col-md-4 col-sm-6 col-6 mb-4 fade-in-element">
+            <div class="new-product-card">
+                <div class="new-product-card-top" [routerLink]="['/shop-details', product.id]">
+                    <img [src]="product.image" class="new-product-img" [alt]="product.name">
+                    @if (product.label) {
+                        <span class="new-product-badge">{{ product.label }}</span>
+                    } @else if (product.discountPercent) {
+                        <span class="new-product-badge">{{ product.discountPercent }}% OFF</span>
+                    }
+                    <button class="heart-btn" [class.active]="isInWishlist(product.id)" (click)="toggleWishlist(product, $event)">
+                        <i class="fa" [class.fa-heart]="isInWishlist(product.id)" [class.fa-heart-o]="!isInWishlist(product.id)"></i>
+                    </button>
+                </div>
+                <div class="new-product-card-bottom">
+                    <h3 class="new-product-title" [routerLink]="['/shop-details', product.id]">{{ product.name }}</h3>
+                    <div class="new-product-qty-price">
+                        <span class="new-product-price">₹{{ product.price.toLocaleString() }}
+                            @if (product.originalPrice) {
+                                <span class="old-price">₹{{ product.originalPrice.toLocaleString() }}</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="new-product-colors">
+                        <span class="color-label">COLOR:</span>
+                        @for (color of product.colors.slice(0, 5); track color.name) {
+                            <span class="color-dot" [style.background-color]="color.hex" [attr.data-tooltip]="color.name"></span>
+                        }
+                    </div>
+                    <div class="new-product-actions">
+                        <button class="add-to-cart-btn" (click)="addToCart(product, $event)">ADD TO CART</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+
+<!-- SHOP BY CATEGORY Section -->
+<section class="luxury-section container" style="margin-bottom: 60px;">
+    <div class="luxury-section-header text-center" style="border-bottom: none; margin-bottom: 50px;">
+        <h2>SHOP BY CATEGORY</h2>
+    </div>
+    <div class="row category-grid">
+        @for (cat of categories; track cat.id) {
+        <div class="col-lg-6 col-md-12 col-sm-12 col-12 mb-5">
+            <div class="fancy-category-wrap fade-in-element">
+                <mat-card class="fancy-category-card" [routerLink]="['/shop']" [queryParams]="{ category: cat.name }"
+                    matRipple>
+                    <div class="fancy-card-content">
+                        <span class="fancy-category-cursive">{{ cat.cursive }}</span>
+                        <h3 class="fancy-category-title">{{ cat.title }}</h3>
+                        <p class="fancy-category-desc">{{ cat.description }}</p>
+                        <button class="fancy-category-btn">Shop Now</button>
+                    </div>
+                </mat-card>
+                <div class="fancy-category-img-container">
+                    @if (cat.videoUrl) {
+                        <video autoplay loop [muted]="true" playsinline class="fancy-category-img" [src]="getSafeVideoUrl(cat.videoUrl)"></video>
+                    } @else {
+                        <img class="fancy-category-img" [src]="cat.imageUrl || '/img/product/product-1.jpg'" [alt]="cat.title">
+                    }
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+
+<!-- TRENDING NOW Section -->
+<section class="luxury-section container">
+    <div class="luxury-section-header">
+        <h2>TRENDING NOW</h2>
+        <a routerLink="/shop" class="view-all-link">VIEW ALL <i class="fa fa-angle-right"></i></a>
+    </div>
+    <div class="row">
+        @for (product of trendingNowProducts; track product.id) {
+        <div class="col-lg-3 col-md-4 col-sm-6 col-6 mb-4 fade-in-element">
+            <div class="new-product-card">
+                <div class="new-product-card-top" [routerLink]="['/shop-details', product.id]">
+                    <img [src]="product.image" class="new-product-img" [alt]="product.name">
+                    @if (product.label) {
+                        <span class="new-product-badge">{{ product.label }}</span>
+                    } @else if (product.discountPercent) {
+                        <span class="new-product-badge">{{ product.discountPercent }}% OFF</span>
+                    }
+                    <button class="heart-btn" [class.active]="isInWishlist(product.id)" (click)="toggleWishlist(product, $event)">
+                        <i class="fa" [class.fa-heart]="isInWishlist(product.id)" [class.fa-heart-o]="!isInWishlist(product.id)"></i>
+                    </button>
+                </div>
+                <div class="new-product-card-bottom">
+                    <h3 class="new-product-title" [routerLink]="['/shop-details', product.id]">{{ product.name }}</h3>
+                    <div class="new-product-qty-price">
+                        <span class="new-product-price">₹{{ product.price.toLocaleString() }}
+                            @if (product.originalPrice) {
+                                <span class="old-price">₹{{ product.originalPrice.toLocaleString() }}</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="new-product-colors">
+                        <span class="color-label">COLOR:</span>
+                        @for (color of product.colors.slice(0, 5); track color.name) {
+                            <span class="color-dot" [style.background-color]="color.hex" [attr.data-tooltip]="color.name"></span>
+                        }
+                    </div>
+                    <div class="new-product-actions">
+                        <button class="add-to-cart-btn" (click)="addToCart(product, $event)">ADD TO CART</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+
+<!-- RECENTLY VIEWED PRODUCTS Section -->
+@if (hasRecentlyViewed && recommendedProducts.length > 0) {
+<section class="luxury-section container" style="margin-bottom: 40px;">
+    <div class="luxury-section-header">
+        <h2>RECENTLY VIEWED PRODUCTS</h2>
+        <a routerLink="/shop" class="view-all-link">VIEW ALL <i class="fa fa-angle-right"></i></a>
+    </div>
+    <div class="row">
+        @for (product of recommendedProducts; track product.id) {
+        <div class="col-lg-3 col-md-4 col-sm-6 col-6 mb-4 fade-in-element">
+            <div class="new-product-card">
+                <div class="new-product-card-top" [routerLink]="['/shop-details', product.id]">
+                    <img [src]="product.image" class="new-product-img" [alt]="product.name">
+                    @if (product.label) {
+                        <span class="new-product-badge">{{ product.label }}</span>
+                    } @else if (product.discountPercent) {
+                        <span class="new-product-badge">{{ product.discountPercent }}% OFF</span>
+                    }
+                    <button class="heart-btn" [class.active]="isInWishlist(product.id)" (click)="toggleWishlist(product, $event)">
+                        <i class="fa" [class.fa-heart]="isInWishlist(product.id)" [class.fa-heart-o]="!isInWishlist(product.id)"></i>
+                    </button>
+                </div>
+                <div class="new-product-card-bottom">
+                    <h3 class="new-product-title" [routerLink]="['/shop-details', product.id]">{{ product.name }}</h3>
+                    <div class="new-product-qty-price">
+                        <span class="new-product-price">₹{{ product.price.toLocaleString() }}
+                            @if (product.originalPrice) {
+                                <span class="old-price">₹{{ product.originalPrice.toLocaleString() }}</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="new-product-colors">
+                        <span class="color-label">COLOR:</span>
+                        @for (color of product.colors.slice(0, 5); track color.name) {
+                            <span class="color-dot" [style.background-color]="color.hex" [attr.data-tooltip]="color.name"></span>
+                        }
+                    </div>
+                    <div class="new-product-actions">
+                        <button class="add-to-cart-btn" (click)="addToCart(product, $event)">ADD TO CART</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+}
+
+<!-- Latest Blog Section Begin -->
+<section class="latest spad"
+    style="padding-top: 60px; padding-bottom: 80px; background: #fafafa; border-top: 1px solid #eaeaea;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="luxury-section-header text-center" style="border-bottom: none; margin-bottom: 50px;">
+                    <h2>LATEST NEWS</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12 col-12">
+                @for (blog of latestBlogs; track blog.id) {
+                <div class="fancy-blog-card mb-4" [routerLink]="['/blog-details', blog.id]">
+                    <div class="fancy-blog-img-wrap" [style.background-image]="'url(' + blog.image + ')'"></div>
+                    <div class="fancy-blog-content">
+                        <div class="fancy-blog-header">
+                            <div class="fancy-blog-author-wrap">
+                                <div class="fancy-blog-avatar"><i class="fa fa-user"></i></div>
+                                <div class="fancy-blog-author-meta">
+                                    <span class="author-name">{{ blog.author || 'Admin' }}</span>
+                                    <span class="post-date">{{ blog.date }} • 3 min read</span>
+                                </div>
+                            </div>
+                            <div class="fancy-blog-dots"><i class="fa fa-ellipsis-v"></i></div>
+                        </div>
+                        <h3 class="fancy-blog-title">{{ blog.title }}</h3>
+                        <p class="fancy-blog-desc">{{ blog.contentParagraphs ? blog.contentParagraphs[0] : '' }}</p>
+                        <div class="fancy-blog-divider"></div>
+                        <div class="fancy-blog-footer">
+                            <div class="blog-stats">
+                                <span class="stat-item">{{ blog.commentsCount || 0 }} comments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Latest Blog Section End -->

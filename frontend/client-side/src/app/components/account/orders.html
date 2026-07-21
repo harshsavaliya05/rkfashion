@@ -1,0 +1,236 @@
+<div class="orders-section">
+    <div class="section-title">
+        <h4>Order History</h4>
+        <p>Track the status of your recent orders and view order history.</p>
+    </div>
+
+    @if (orders && orders.length > 0) {
+        <div class="orders-list">
+            @for (order of orders; track order.orderId) {
+                <div class="order-card" [class.is-cancelled]="order.status.toLowerCase() === 'cancelled'">
+                    <!-- Order Card Header -->
+                    <div class="order-card__header">
+                        <div class="meta-item">
+                            <span class="label">ORDER ID</span>
+                            <span class="value font-monospace">{{ order.orderId }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">DATE PLACED</span>
+                            <span class="value">{{ order.date }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">TOTAL PRICE</span>
+                            <span class="value price">₹{{ order.total.toFixed(2) }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">PAYMENT</span>
+                            <span class="value">{{ order.paymentMethod }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">STATUS</span>
+                            <span class="status-badge" [ngClass]="getStatusClass(order.status)">{{ order.status }}</span>
+                        </div>
+                        <div class="status-container" style="margin-left: auto; text-align: right; display: flex; align-items: center; gap: 8px;">
+                            @if (order.status.toLowerCase() === 'pending' || order.status.toLowerCase() === 'confirmed') {
+                                <button (click)="cancelOrder(order.orderId)"
+                                        class="btn btn-sm btn-outline-danger" 
+                                        style="font-size: 12px; font-weight: 700; border: 1.5px solid #dc3545; padding: 6px 15px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; background: transparent; color: #dc3545;">
+                                    <i class="fa fa-times"></i> Cancel Order
+                                </button>
+                            }
+                            @if (order.status.toLowerCase() !== 'cancelled') {
+                                <a [routerLink]="['/track-order']" [queryParams]="{ orderId: order.orderId }"
+                                   class="btn btn-sm btn-outline-dark" 
+                                   style="font-size: 12px; font-weight: 700; color: #1e0a3c; text-decoration: none; border: 1.5px solid #1e0a3c; padding: 6px 15px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s; background: transparent;">
+                                    <i class="fa fa-map-marker"></i> Track Order
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Cancelled Banner Info -->
+                    @if (order.status.toLowerCase() === 'cancelled') {
+                        <div class="cancelled-banner" style="background: #fff5f5; border-bottom: 1px solid #ffe3e3; padding: 12px 20px; color: #c62828; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-exclamation-circle" style="font-size: 16px;"></i>
+                            <span>This order was cancelled. Reserved items have been released back to stock.</span>
+                        </div>
+                    }
+
+                <!-- Return/Exchange Request Status Display -->
+                @if (order.returnRequests && order.returnRequests.length > 0) {
+                    <div class="requests-summary-container" style="padding: 12px 20px 0 20px;">
+                        @for (req of order.returnRequests; track req.id) {
+                            <div class="alert mt-2 mb-0 py-2 px-3 d-flex flex-column" 
+                                 [ngStyle]="{'background-color': req.status === 'Approved' ? '#ecfdf5' : req.status === 'Rejected' ? '#fff5f5' : '#f0f9ff',
+                                             'border': '1px solid',
+                                             'border-color': req.status === 'Approved' ? '#d1fae5' : req.status === 'Rejected' ? '#ffe4e4' : '#cff4fc',
+                                             'color': req.status === 'Approved' ? '#065f46' : req.status === 'Rejected' ? '#991b1b' : '#087990',
+                                             'font-size': '12.5px',
+                                             'border-radius': '6px'}">
+                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 5px;">
+                                    <span>
+                                        <i class="fa" [class.fa-reply]="req.type === 'Return'" [class.fa-exchange]="req.type === 'Exchange'"></i>
+                                        <strong> {{ req.type }} Request ({{ req.requestId }}):</strong>
+                                    </span>
+                                    <span class="badge" 
+                                          [ngStyle]="{'background-color': req.status === 'Approved' ? '#10b981' : req.status === 'Rejected' ? '#ef4444' : '#0dcaf0', 'color': '#fff'}"
+                                          style="font-size: 10px; padding: 4px 8px; border-radius: 10px; text-transform: uppercase; font-weight: 700;">
+                                        {{ req.status }}
+                                    </span>
+                                </div>
+                                @if (req.status === 'Rejected' && req.comments) {
+                                    <div class="mt-2" style="font-size: 12px; border-top: 1px dashed rgba(153, 27, 27, 0.2); padding-top: 6px; font-weight: 500;">
+                                        <strong>Reason for Rejection:</strong> <span style="font-style: italic;">"{{ req.comments }}"</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!-- Order Card Body / Items -->
+                <div class="order-card__body">
+                        <div class="order-items">
+                            @for (item of order.items; track item.key) {
+                                <div class="order-item-container">
+                                    <div class="order-item">
+                                        <div class="order-item__image">
+                                            <img [src]="item.image" [alt]="item.name">
+                                        </div>
+                                        <div class="order-item__details">
+                                            <h6>{{ item.name }}</h6>
+                                            <div class="variant-text">
+                                                <span>Size: <strong>{{ item.size }}</strong></span>
+                                                <span class="separator">|</span>
+                                                <span>Color: <strong>{{ item.colorName }}</strong></span>
+                                            </div>
+                                            <p class="qty-text">Qty: <strong>{{ item.quantity }}</strong></p>
+                                            @if (order.status.toLowerCase() === 'delivered' && activeReviewItemKey !== item.key) {
+                                                <button class="btn btn-sm btn-outline-dark mt-2 review-btn" style="font-size: 11px; padding: 4px 10px;" (click)="openReviewForm(item.key)">
+                                                    <i class="fa fa-pencil"></i> Write Review
+                                                </button>
+                                            }
+                                        </div>
+                                        <div class="order-item__price">
+                                            ₹{{ (item.price * item.quantity).toFixed(2) }}
+                                        </div>
+                                    </div>
+                                    
+                                    @if (activeReviewItemKey === item.key) {
+                                        <div class="inline-review-form" style="padding: 15px 20px; background: #fafafa; border-top: 1px dashed #eaeaea; border-bottom: 1px solid #f5f5f5;">
+                                            <h6 style="margin-bottom: 10px; font-size: 13px; font-weight: 700; color: #111;">Rate & Review {{ item.name }}</h6>
+                                            <div class="mb-3 d-flex align-items-center">
+                                                <span style="font-size: 12px; margin-right: 10px; color: #555;">Rating:</span>
+                                                <div style="font-size: 14px;">
+                                                    @for (s of [1,2,3,4,5]; track s) {
+                                                        <i class="fa" 
+                                                           style="cursor: pointer; color: #f5b223; margin-right: 3px;"
+                                                           [class.fa-star]="s <= (hoverRating || reviewRating)"
+                                                           [class.fa-star-o]="s > (hoverRating || reviewRating)"
+                                                           (mouseenter)="setHover(s)"
+                                                           (mouseleave)="clearHover()"
+                                                           (click)="setRating(s)">
+                                                        </i>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <textarea class="form-control" rows="2" placeholder="Share your experience with this product..." [(ngModel)]="reviewText" style="font-size: 13px; resize: vertical; min-height: 60px;"></textarea>
+                                            </div>
+                                            <div class="mb-3" style="text-align: left;">
+                                                <label style="font-size: 11.5px; font-weight: 700; color: #555; display: block; margin-bottom: 6px;">
+                                                    <i class="fa fa-camera" style="margin-right: 5px;"></i> Upload Photos (Max 5)
+                                                </label>
+                                                <input type="file" (change)="onReviewPhotosSelected($event)" multiple accept="image/*" class="form-control" style="font-size: 12px; height: auto; padding: 6px 12px; border-radius: 4px; border-color: #ddd;">
+                                                
+                                                @if (reviewPhotoPreviews.length > 0) {
+                                                    <div class="d-flex flex-wrap mt-2" style="gap: 8px;">
+                                                        @for (preview of reviewPhotoPreviews; track preview) {
+                                                            <div style="position: relative; width: 50px; height: 50px; border-radius: 4px; border: 1px solid #ddd; overflow: hidden; background: #eee;">
+                                                                <img [src]="preview" style="width: 100%; height: 100%; object-fit: cover;">
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="d-flex" style="gap: 10px;">
+                                                <button class="btn btn-dark" style="font-size: 12px; font-weight: 600; padding: 6px 15px;" [disabled]="!reviewRating || !reviewText.trim() || isSubmittingReview" (click)="submitReview(order, item)">
+                                                    <i class="fa" [ngClass]="isSubmittingReview ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i> Submit Review
+                                                </button>
+                                                <button class="btn btn-outline-secondary" style="font-size: 12px; font-weight: 600; padding: 6px 15px;" (click)="cancelReview()" [disabled]="isSubmittingReview">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Order Card Footer / Shipping address info -->
+                    <div class="order-card__footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <p class="shipping-info" style="margin: 0; text-align: left;">
+                            <strong>Shipped To:</strong> 
+                            {{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}, 
+                            {{ order.shippingAddress.flatNo }}, {{ order.shippingAddress.areaName }}, 
+                            {{ order.shippingAddress.city }} - {{ order.shippingAddress.postcode }}
+                        </p>
+                        
+                        @if (order.status.toLowerCase() === 'delivered') {
+                            @if (hasReturnOrExchangeRequest(order)) {
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <button (click)="downloadInvoice(order.orderId)"
+                                            class="btn btn-sm btn-outline-success" 
+                                            style="font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1.5px solid #198754; color: #198754; background: transparent; text-decoration: none; transition: all 0.2s;">
+                                        <i class="fa fa-download"></i> Download Bill
+                                    </button>
+                                    <a [routerLink]="['/order-return-exchange']" [queryParams]="{ orderId: order.orderId }" 
+                                       class="btn btn-sm btn-dark" style="font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; text-decoration: none; background: #1e0a3c; color: #fff; border: none;">
+                                        <i class="fa fa-eye"></i> View Request Details
+                                    </a>
+                                    @if (isRequestRejected(order)) {
+                                        <span style="font-size: 12px; color: #dc3545; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i class="fa fa-exclamation-triangle"></i> Contact us via our <a routerLink="/contact" style="color: #1e0a3c; text-decoration: underline; font-weight: 800;">Contact Page</a> for help.
+                                        </span>
+                                    }
+                                </div>
+                            } @else {
+                                <div class="order-actions" style="display: flex; gap: 10px;">
+                                    <button (click)="downloadInvoice(order.orderId)"
+                                            class="btn btn-sm btn-outline-success" 
+                                            style="font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1.5px solid #198754; color: #198754; background: transparent; text-decoration: none; transition: all 0.2s;">
+                                        <i class="fa fa-download"></i> Download Bill
+                                    </button>
+                                    <a [routerLink]="['/order-return-exchange']" [queryParams]="{ orderId: order.orderId, type: 'Return' }" 
+                                       class="btn btn-sm btn-outline-danger" style="font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid #dc3545; text-decoration: none;">
+                                        <i class="fa fa-reply"></i> Return Items
+                                    </a>
+                                    <a [routerLink]="['/order-return-exchange']" [queryParams]="{ orderId: order.orderId, type: 'Exchange' }" 
+                                       class="btn btn-sm btn-outline-primary" style="font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid #0d6efd; text-decoration: none;">
+                                        <i class="fa fa-exchange"></i> Exchange Items
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    } @else {
+        <div class="empty-orders">
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            <h5>No Orders Found</h5>
+            <p>You haven't placed any orders with RK Fashion yet.</p>
+            <a routerLink="/shop" class="shop-now-btn">Start Shopping</a>
+        </div>
+    }
+</div>
+
+

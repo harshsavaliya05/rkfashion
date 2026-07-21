@@ -1,0 +1,338 @@
+<!-- Mobile Top Header -->
+<div class="mobile-top-header">
+    <div class="mobile-top-header__row-one">
+        <div class="mobile-profile-block" [routerLink]="isLoggedIn ? '/account' : '/login'">
+            <div class="mobile-avatar">
+                @if (isLoggedIn) {
+                <span>{{ getUserInitial() }}</span>
+                } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                }
+            </div>
+            <div class="mobile-user-info">
+                <span class="greeting">{{ getGreeting() }}</span>
+                <span class="username">{{ isLoggedIn ? userName : 'Sign In' }}</span>
+            </div>
+        </div>
+        <div class="mobile-header-actions">
+            <a routerLink="/wishlist" class="mobile-header-btn" title="Wishlist">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </a>
+            <a routerLink="/cart" class="mobile-header-btn" title="Shopping Cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                @if (cartCount > 0) {
+                <span class="mobile-badge">{{ cartCount }}</span>
+                }
+            </a>
+        </div>
+    </div>
+    
+    <div class="mobile-top-header__row-two">
+        <div class="mobile-search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Search products..." [value]="mobileSearchQuery" #mobSearch (keyup.enter)="onMobileSearch(mobSearch.value)">
+            <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" (click)="onMobileSearch(mobSearch.value)">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+        </div>
+    </div>
+
+    <div class="mobile-top-header__row-three">
+        <div class="mobile-category-chips">
+            @for (cat of categories; track cat.key) {
+            <button class="chip-btn" [class.active]="activeCategory.toLowerCase() === cat.key.toLowerCase()" (click)="selectCategory(cat.key)">
+                {{ cat.label }}
+            </button>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas Menu Begin -->
+<div class="offcanvas-menu-overlay" [class.active]="isCanvasActive" (click)="isCanvasActive = false"></div>
+<div class="offcanvas-menu-wrapper" [class.active]="isCanvasActive">
+    <div class="offcanvas__option">
+        <div class="offcanvas__links">
+            <a href="javascript:void(0)" (click)="handleAccountClick()"
+                style="display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;">
+                @if (isLoggedIn) {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width: 14px; height: 14px;">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign out</span>
+                } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width: 14px; height: 14px;">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                    <polyline points="10 17 15 12 10 7"></polyline>
+                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+                <span>Sign in</span>
+                }
+            </a>
+            <a routerLink="/faqs" (click)="isCanvasActive = false"
+                style="display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="width: 14px; height: 14px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>FAQs</span>
+            </a>
+        </div>
+    </div>
+    <div class="offcanvas__nav__option">
+        <!-- Profile Icon (Mobile Offcanvas) -->
+        <a [routerLink]="isLoggedIn ? '/account' : '/login'" (click)="isCanvasActive = false" class="header-link"
+            style="position: relative;" [title]="isLoggedIn ? 'My Account' : 'Sign In'">
+            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            @if (isLoggedIn) {
+            <span class="active-dot"></span>
+            }
+        </a>
+        <a routerLink="/wishlist" class="header-link" style="position: relative;">
+            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                </path>
+            </svg>
+            @if (wishlistCount > 0) {
+            <span class="custom-badge">{{ wishlistCount }}</span>
+            }
+        </a>
+        <a routerLink="/cart" class="header-link" style="position: relative;">
+            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            @if (cartCount > 0) {
+            <span class="custom-badge">{{ cartCount }}</span>
+            }
+        </a>
+    </div>
+    <div id="mobile-menu-wrap">
+        <div class="slicknav_menu">
+            <nav class="slicknav_nav" style="display: block;">
+                <ul>
+                    <li>
+                        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                            (click)="isCanvasActive = false">Home</a>
+                    </li>
+                    <li>
+                        <a routerLink="/shop" routerLinkActive="active" (click)="isCanvasActive = false">Shop</a>
+                    </li>
+                    <li>
+                        <a routerLink="/about" routerLinkActive="active" (click)="isCanvasActive = false">About Us</a>
+                    </li>
+                    <li>
+                        <a routerLink="/blog" routerLinkActive="active" (click)="isCanvasActive = false">Blog</a>
+                    </li>
+                    <li>
+                        <a routerLink="/contact" routerLinkActive="active" (click)="isCanvasActive = false">Contacts</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="offcanvas__text">
+        <p>🎉 Get ₹100 OFF on your first order! Use Code: <strong
+                style="color: #ffffff; font-weight: 800;">FIRST100</strong></p>
+    </div>
+</div>
+<!-- Offcanvas Menu End -->
+
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-7">
+                    <div class="header__top__left">
+                        <p>🎉 Get ₹100 OFF on your first order! Use Code: <strong
+                                style="color: #ffffff; font-weight: 800; letter-spacing: 0.5px;">FIRST100</strong></p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__links">
+                            @if (isLoggedIn) {
+                            <a href="javascript:void(0)" (click)="handleAccountClick()"
+                                style="display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                <span>Sign out</span>
+                            </a>
+                            } @else {
+                            <a routerLink="/login"
+                                style="display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                    <polyline points="10 17 15 12 10 7"></polyline>
+                                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                                </svg>
+                                <span>Sign in</span>
+                            </a>
+                            }
+                            <a routerLink="/faqs"
+                                style="display: inline-flex; align-items: center; gap: 6px; vertical-align: middle;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                <span>FAQs</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header__nav-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a routerLink="/" class="logo-svg">
+                            <svg width="195" height="30" viewBox="0 0 195 30" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4L20 15L12 26L4 15Z" stroke="#111111" stroke-width="2"
+                                    stroke-linejoin="round" fill="none" />
+                                <circle cx="12" cy="15" r="2" fill="#111111" />
+                                <text x="32" y="21" font-family="'Nunito Sans', sans-serif" font-size="19"
+                                    font-weight="900" fill="#111111" letter-spacing="1.5">RK FASHION</text>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-7">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a
+                                    routerLink="/">Home</a></li>
+                            <li routerLinkActive="active"><a routerLink="/shop">Shop</a></li>
+                            <li routerLinkActive="active">
+                                <a routerLink="/about">About Us</a>
+                            </li>
+                            <li routerLinkActive="active"><a routerLink="/blog">Blog</a></li>
+                            <li routerLinkActive="active"><a routerLink="/contact">Contacts</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-2">
+                    <div class="header__nav__option">
+                        <!-- Profile Icon (Desktop Nav) -->
+                        <a [routerLink]="isLoggedIn ? '/account' : '/login'" class="header-link"
+                            style="position: relative;" [title]="isLoggedIn ? 'My Account' : 'Sign In'">
+                            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            @if (isLoggedIn) {
+                            <span class="active-dot"></span>
+                            }
+                        </a>
+                        <a routerLink="/wishlist" class="header-link" style="position: relative;">
+                            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg>
+                        </a>
+                        <a routerLink="/cart" class="header-link" style="position: relative;">
+                            <svg class="header-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            @if (cartCount > 0) {
+                            <span class="custom-badge">{{ cartCount }}</span>
+                            }
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open" (click)="isCanvasActive = true"><i class="fa fa-bars"></i></div>
+        </div>
+    </div>
+</header>
+<!-- Header Section End -->
+
+<!-- Mobile Bottom Navigation Bar -->
+<div class="mobile-bottom-nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Home</span>
+    </a>
+    <a routerLink="/shop" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Categories</span>
+    </a>
+    <a routerLink="/wishlist" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span>Wishlist</span>
+    </a>
+    <a routerLink="/cart" routerLinkActive="active" class="nav-item">
+        <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            @if (cartCount > 0) {
+            <span class="nav-badge">{{ cartCount }}</span>
+            }
+        </div>
+        <span>Carts</span>
+    </a>
+    <a [routerLink]="isLoggedIn ? '/account' : '/login'" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Profile</span>
+    </a>
+</div>

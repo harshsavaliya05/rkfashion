@@ -1,0 +1,105 @@
+.contact-phone,
+.contact-email {
+  color: #3d3d3d;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: #3d3d3d;
+    text-decoration: none;
+  }
+}
+
+.contact-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 38px;
+    height: 38px;
+    width: 38px;
+    color: #111111;
+  }
+}
+
+.contact__text ul {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+
+  li {
+    width: 100%;
+    margin-bottom: 40px;
+
+    &:nth-child(2),
+    &:nth-child(3) {
+      width: 50%;
+      padding-right: 15px;
+      margin-bottom: 40px;
+      
+      @media only screen and (max-width: 576px) {
+        width: 100%;
+        padding-right: 0;
+        margin-bottom: 40px;
+      }
+    }
+  }
+}
+
+.contact__text ul li h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
+    color: #111111;
+  }
+}
+
+:host ::ng-deep {
+  .dense-form-field {
+    --mdc-outlined-text-field-container-height: 48px !important;
+    --mat-form-field-container-height: 48px !important;
+    font-size: 14px !important;
+    
+    .mat-mdc-text-field-wrapper {
+      height: 48px !important;
+    }
+    
+    .mat-mdc-form-field-flex {
+      height: 48px !important;
+    }
+    
+    .mat-mdc-form-field-infix {
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+      min-height: 48px !important;
+    }
+  }
+}
+
+/* Send Message Button Overrides */
+button.site-btn,
+.site-btn {
+    background-color: #1e0a3c !important;
+    background: #1e0a3c !important;
+    color: #ffffff !important;
+    border-color: #1e0a3c !important;
+    transition: all 0.3s ease !important;
+    border-radius: 6px !important;
+
+    &:hover,
+    &:focus {
+        background-color: var(--primary-color) !important;
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(160, 90, 255, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }
+}

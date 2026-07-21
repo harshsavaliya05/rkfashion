@@ -1,0 +1,194 @@
+<div class="dashboard-container" style="font-family: 'Outfit', sans-serif;">
+  <!-- Header -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-6 col-12">
+      <h4 style="font-weight: 700; color: #111111; margin: 0;">Admin Management</h4>
+      <p style="color: #777777; font-size: 13px; margin: 0;">View current profile summary and register new administrator
+        credentials.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left Column: Avatar & Summary -->
+    <div class="col-md-4 col-12 mb-4">
+      <div class="bottom-card text-center" style="padding: 30px 24px; height: 100% !important;">
+        <div
+          style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary-bg); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 20px; font-family: 'Outfit'; border: 4px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
+          {{ profile.name.charAt(0).toUpperCase() }}
+        </div>
+
+        <h5 style="font-weight: 700; color: #111; margin: 0 0 4px 0;">{{ profile.name }}</h5>
+        <span style="font-size: 12px; color: #999;">{{ profile.role === 'ADMINISTRATOR' ? 'Super Administrator' : profile.role }}</span>
+
+        <div class="mt-3 d-flex justify-content-center" style="gap: 8px;">
+          <span
+            style="font-size: 11px; font-weight: 700; background: var(--primary-bg); color: var(--primary-color); padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">
+            {{ profile.role }}
+          </span>
+        </div>
+
+        <div
+          style="margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px; text-align: left; font-size: 13px; color: #666;">
+          <div class="mb-2"><strong>Joined Date:</strong> <span style="float: right; color: #111;">{{ profile.joined
+              }}</span></div>
+          <div><strong>Last Login:</strong> <span style="float: right; color: #111;">{{ profile.lastLogin }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Create New Admin Form -->
+    <div class="col-md-8 col-12 mb-4">
+      <!-- Create New Admin Card -->
+      <div class="bottom-card" style="padding: 24px; height: 100% !important;">
+        <h5
+          style="font-weight: 700; margin-bottom: 20px; color: #111; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left;">
+          <i class="fa fa-user-plus" style="color: var(--primary-color); margin-right: 6px;"></i> Create New Admin
+        </h5>
+
+        <ng-container *ngIf="isSuperAdmin">
+          <div class="row">
+          <div class="col-md-6 col-12 mb-3">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase;">Admin Name</label>
+            <input type="text" class="form-control" [(ngModel)]="newAdminForm.name" placeholder="Enter full name"
+              style="height: 40px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+          </div>
+          <div class="col-md-6 col-12 mb-3">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase;">Role / Designation</label>
+            <select class="form-control" [(ngModel)]="newAdminForm.role"
+              style="height: 40px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; cursor: pointer; color: #333;">
+              <option value="Employee">Employee</option>
+              <option value="Manager">Manager</option>
+              <option value="CEO">CEO</option>
+              <option value="Staff">Staff</option>
+            </select>
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase;">Email Address (Login ID)</label>
+            <input type="email" class="form-control" [(ngModel)]="newAdminForm.email" placeholder="Enter email ID"
+              style="height: 40px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+          </div>
+          <div class="col-12 mb-3">
+            <label class="form-label" style="font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase;">Password</label>
+            <div style="position: relative;">
+              <input [type]="showAdminPassword ? 'text' : 'password'" class="form-control"
+                [(ngModel)]="newAdminForm.password" placeholder="Enter security password"
+                style="height: 40px; font-size: 13.5px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; padding-right: 40px;">
+              <span (click)="showAdminPassword = !showAdminPassword"
+                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #777; padding: 4px;">
+                <i class="fa" [class.fa-eye]="!showAdminPassword" [class.fa-eye-slash]="showAdminPassword"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: auto; padding-top: 20px;">
+          <button class="primary-btn" (click)="createAdmin()"
+            style="padding: 10px 24px !important; font-size: 13px !important; border-radius: 6px !important; height: 38px; line-height: 1; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s;">
+            Create Admin
+          </button>
+        </div>
+        </ng-container>
+
+        <div *ngIf="!isSuperAdmin" style="text-align: center; padding: 40px 20px;">
+          <i class="fa fa-lock" style="font-size: 32px; color: #cbd5e1; margin-bottom: 15px;"></i>
+          <h6 style="font-weight: 600; color: #334155; margin-bottom: 8px;">Access Restricted</h6>
+          <p style="font-size: 13px; color: #64748b; margin: 0;">Only the Super Administrator has permission to register new admins.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Full-Width Card: Administrators & Staff List -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="bottom-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 16px 20px; border-bottom: 1px solid #eaeaea;">
+          <h5 style="font-weight: 700; margin: 0; color: #111; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <i class="fa fa-users" style="color: var(--primary-color);"></i> Active Admins & Staff Directory
+          </h5>
+        </div>
+        
+        <div class="table-responsive" style="margin: 0; border: none;">
+          <table class="table responsive-card-table" style="margin-bottom: 0; width: 100%;">
+            <thead style="background: #f8fafc; border-bottom: 1px solid #eaeaea;">
+              <tr>
+                <th style="padding: 14px 20px; font-weight: 700; border: none; font-size: 11.5px; color: #555; white-space: nowrap;">Name</th>
+                <th style="padding: 14px 20px; font-weight: 700; border: none; font-size: 11.5px; color: #555; white-space: nowrap;">Email (Login ID)</th>
+                <th style="padding: 14px 20px; font-weight: 700; border: none; font-size: 11.5px; color: #555; white-space: nowrap;">Designation / Role</th>
+                <th style="padding: 14px 20px; font-weight: 700; border: none; font-size: 11.5px; color: #555; text-align: center; width: 120px; white-space: nowrap;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let admin of adminsList" style="border-bottom: 1px solid #f1f1f1;">
+                <!-- Avatar & Name -->
+                <td data-label="Name" style="padding: 12px 20px; vertical-align: middle; white-space: nowrap;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--primary-bg); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">
+                      {{ admin.name.charAt(0).toUpperCase() }}
+                    </div>
+                    <strong style="font-size: 13px; color: #111;">{{ admin.name }}</strong>
+                  </div>
+                </td>
+                <!-- Email -->
+                <td data-label="Email" style="padding: 12px 20px; vertical-align: middle; font-size: 12.5px; color: #555; white-space: nowrap;">
+                  {{ admin.email }}
+                </td>
+                <!-- Role Badge -->
+                <td data-label="Role" style="padding: 12px 20px; vertical-align: middle; white-space: nowrap;">
+                  <span style="font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase;"
+                    [style.background]="admin.role === 'CEO' ? '#ffebeb' : (admin.role === 'Manager' ? '#ebf5ff' : '#f1f5f9')"
+                    [style.color]="admin.role === 'CEO' ? '#e53637' : (admin.role === 'Manager' ? '#1a73e8' : '#475569')">
+                    {{ admin.role }}
+                  </span>
+                </td>
+                <!-- Action: Delete -->
+                <td data-label="Actions" style="padding: 12px 20px; vertical-align: middle; text-align: center;">
+                  <div class="actions-flex-group" style="justify-content: flex-end;">
+                    <button *ngIf="isSuperAdmin && admin.email !== 'harshsavaliya125@gmail.com'" (click)="deleteAdmin(admin.id, admin.email)" 
+                      class="btn btn-sm"
+                      style="background: #fff5f5; color: #e53637; border: 1px solid #fed7d7; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;"
+                      title="Revoke Access">
+                      <i class="fa fa-user-times"></i> Revoke Access
+                    </button>
+                    <span *ngIf="admin.email === 'harshsavaliya125@gmail.com'" style="font-size: 11px; color: #64748b; font-weight: 700; background: #f1f5f9; padding: 4px 10px; border-radius: 4px;">PRIMARY SYSTEM ADMIN</span>
+                    <span *ngIf="!isSuperAdmin && admin.email !== 'harshsavaliya125@gmail.com'" style="font-size: 11px; color: #94a3b8; font-weight: 600;"><i class="fa fa-lock"></i> RESTRICTED</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simple premium toast for feedback notifications -->
+<div class="toast-feedback-wrapper" [class.active]="showToast">
+  <div class="toast-feedback-card">
+    <i class="fa" [class]="toastIcon" [style.color]="toastColor" style="font-size: 18px;"></i>
+    <span style="font-size: 13px; font-weight: 600; color: #111;">{{ toastMessage }}</span>
+  </div>
+</div>
+
+<!-- Custom Premium Delete Confirmation Dialog -->
+<div class="confirm-dialog-backdrop" [class.active]="showDeleteConfirm" (click)="cancelDelete()"></div>
+<div class="confirm-dialog-wrapper" [class.active]="showDeleteConfirm">
+  <div class="confirm-dialog-card">
+    <div class="confirm-dialog-icon" style="color: var(--primary-color); background: var(--primary-bg);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="8.5" cy="7" r="4"></circle>
+        <line x1="18" y1="8" x2="23" y2="13"></line>
+        <line x1="23" y1="8" x2="18" y2="13"></line>
+      </svg>
+    </div>
+    <h3 class="confirm-title">Revoke Access</h3>
+    <p class="confirm-text">Are you sure you want to delete admin account: <strong>{{ adminToDelete?.email }}</strong>?</p>
+    <div class="confirm-actions">
+      <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+      <button class="btn-confirm" style="background: var(--primary-color);" (click)="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+.account {
+  padding-top: 50px;
+  padding-bottom: 80px;
+  background: #fcfcfc;
+}
+
+.account__sidebar {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  margin-bottom: 30px;
+}
+
+.account__sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 24px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f2f2f2;
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+    background: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1e0a3c;
+    flex-shrink: 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      stroke: #1e0a3c;
+    }
+  }
+
+  .info {
+    min-width: 0;
+    
+    h5 {
+      font-family: 'Nunito Sans', sans-serif;
+      font-weight: 700;
+      color: #111111;
+      font-size: 16px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 13px;
+      color: #777777;
+      margin-bottom: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.account__sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #444444;
+      border-radius: 8px; /* subtle rounding instead of 0px */
+      text-decoration: none;
+      transition: all 0.2s ease;
+
+      svg {
+        width: 18px;
+        height: 18px;
+        stroke: #666666;
+        transition: stroke 0.2s ease;
+      }
+
+      &:hover {
+        background: #f3f2ee; /* male fashion standard secondary bg */
+        color: #1e0a3c;
+
+        svg {
+          stroke: #1e0a3c;
+        }
+      }
+
+      &.active {
+        background: #1e0a3c;
+        color: #ffffff;
+
+        svg {
+          stroke: #ffffff;
+        }
+      }
+    }
+
+    &.logout-item {
+      margin-top: 15px;
+      border-top: 1px dashed #ebebeb;
+      padding-top: 15px;
+
+      a {
+        color: #1e0a3c;
+
+        svg {
+          stroke: #1e0a3c;
+        }
+
+        &:hover {
+          background: #f3f2ee;
+        }
+      }
+    }
+  }
+}
+
+.account__content-wrapper {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  min-height: 400px;
+}
+
+@media (max-width: 991px) {
+  .account__content-wrapper {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .account__sidebar {
+    margin-bottom: 20px;
+  }
+}
+
+

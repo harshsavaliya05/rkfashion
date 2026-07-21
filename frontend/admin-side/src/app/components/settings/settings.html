@@ -1,0 +1,129 @@
+<div class="dashboard-container" style="font-family: 'Outfit', sans-serif;">
+  <!-- Header -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-6 col-12">
+      <h4 style="font-weight: 700; color: #111111; margin: 0;">Global Settings</h4>
+      <p style="color: #777777; font-size: 13px; margin: 0;">Manage your store identity, currency options, active payment gateways and shipping configurations.</p>
+    </div>
+    <div class="col-md-6 col-12 d-flex justify-content-md-end justify-content-start align-items-center" style="gap: 10px; margin-top: 12px;">
+      <button class="primary-btn" (click)="saveSettings()" style="padding: 10px 24px !important; font-size: 13px !important; border-radius: 6px !important; height: 38px; line-height: 1;">
+        <i class="fa fa-save"></i> Save Changes
+      </button>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Left column: Navigation Tabs -->
+    <div class="col-md-3 col-12 mb-3">
+      <div class="bottom-card" style="padding: 10px;">
+        <div class="settings-tabs-list" style="display: flex; flex-direction: column; gap: 4px;">
+          <!-- Tab 2: Payments -->
+          <button class="settings-tab-btn" [class.active]="activeTab === 'payments'" (click)="setTab('payments')">
+            <i class="fa fa-credit-card"></i> Payment Methods
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Tab Content Card -->
+    <div class="col-md-9 col-12">
+      <div class="bottom-card" style="padding: 24px;">
+        
+
+        <!-- Tab Content: PAYMENTS -->
+        <div *ngIf="activeTab === 'payments'">
+          <h5 style="font-weight: 700; margin-bottom: 20px; color: #111; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Payment Gateway Controls
+          </h5>
+          
+          <!-- COD Switch -->
+          <div class="setting-row-option mb-4" style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9;">
+            <div>
+              <strong style="font-size: 14px; color: #111; display: block;">Cash on Delivery (COD)</strong>
+              <span style="font-size: 12px; color: #777;">Allow users to pay in cash during physical package drop-off.</span>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" [(ngModel)]="paymentSettings.codActive">
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+
+          <!-- Card Razorpay Switch & Inputs -->
+          <div class="setting-row-option mb-3" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <strong style="font-size: 14px; color: #111; display: block;">Razorpay Integration (Online Cards)</strong>
+                <span style="font-size: 12px; color: #777;">Accept credit cards, debit cards, net banking, and wallets.</span>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" [(ngModel)]="paymentSettings.razorpayActive">
+                <span class="slider-round"></span>
+              </label>
+            </div>
+            
+            <div class="row mt-2" *ngIf="paymentSettings.razorpayActive">
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Razorpay Key ID</label>
+                <input type="text" class="form-control" [(ngModel)]="paymentSettings.razorpayKeyId" placeholder="rzp_test_..."
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+              </div>
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Razorpay Secret Key</label>
+                <input type="password" class="form-control" [(ngModel)]="paymentSettings.razorpaySecretKey" placeholder="rzp_secret_..."
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+              </div>
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Payment Environment</label>
+                <select class="form-control" [(ngModel)]="paymentSettings.razorpayMode"
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; color: #444; width: 100% !important;">
+                  <option value="test">Sandbox (Testing Mode)</option>
+                  <option value="live">Production (Live Payments)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cashfree Integration Switch & Inputs -->
+          <div class="setting-row-option mb-3" style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #eaeaea; padding-top: 15px;">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <strong style="font-size: 14px; color: #111; display: block;">Cashfree Integration (Online Cards & UPI)</strong>
+                <span style="font-size: 12px; color: #777;">Accept credit cards, debit cards, UPI, net banking, and wallets using Cashfree.</span>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" [(ngModel)]="paymentSettings.cashfreeActive">
+                <span class="slider-round"></span>
+              </label>
+            </div>
+            
+            <div class="row mt-2" *ngIf="paymentSettings.cashfreeActive">
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Cashfree App ID</label>
+                <input type="text" class="form-control" [(ngModel)]="paymentSettings.cashfreeAppId" placeholder="e.g. TEST..."
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+              </div>
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Cashfree Secret Key</label>
+                <input type="password" class="form-control" [(ngModel)]="paymentSettings.cashfreeSecretKey" placeholder="e.g. cfsk_..."
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit';">
+              </div>
+              <div class="col-md-4 col-12 mb-3">
+                <label class="form-label" style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase;">Payment Environment</label>
+                <select class="form-control" [(ngModel)]="paymentSettings.cashfreeMode"
+                  style="height: 38px; font-size: 13px; border-radius: 6px; border-color: #eaeaea; font-family: 'Outfit'; color: #444; width: 100% !important;">
+                  <option value="test">Sandbox (Testing Mode)</option>
+                  <option value="live">Production (Live Payments)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+

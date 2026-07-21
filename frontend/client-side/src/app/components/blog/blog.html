@@ -1,0 +1,61 @@
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Our Blog</h4>
+                    <div class="breadcrumb__links">
+                        <a routerLink="/">Home</a>
+                        <span>Our Blog</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Blog Section Begin -->
+<section class="blog spad" style="background: #fafafa; padding-top: 60px; padding-bottom: 80px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12 col-12">
+                
+                @for (blog of blogs; track blog.id) {
+                <div class="fancy-blog-card mb-4" [routerLink]="['/blog-details', blog.id]">
+                    <!-- Left: Blog Image -->
+                    <div class="fancy-blog-img-wrap" [style.background-image]="'url(' + blog.image + ')'"></div>
+                    
+                    <!-- Right: Blog Content -->
+                    <div class="fancy-blog-content">
+                        <div class="fancy-blog-header">
+                            <div class="fancy-blog-author-wrap">
+                                <div class="fancy-blog-avatar"><i class="fa fa-user"></i></div>
+                                <div class="fancy-blog-author-meta">
+                                    <span class="author-name">{{ blog.author || 'Admin' }}</span>
+                                    <span class="post-date">{{ blog.date }} • 3 min read</span>
+                                </div>
+                            </div>
+                            <div class="fancy-blog-dots"><i class="fa fa-ellipsis-v"></i></div>
+                        </div>
+                        
+                        <h3 class="fancy-blog-title">{{ blog.title }}</h3>
+                        <p class="fancy-blog-desc">{{ blog.contentParagraphs ? blog.contentParagraphs[0] : '' }}</p>
+                        
+                        <div class="fancy-blog-divider"></div>
+                        
+                        <div class="fancy-blog-footer">
+                            <div class="blog-stats">
+                                <span class="stat-item">{{ blog.commentsCount || 0 }} comments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Blog Section End -->
