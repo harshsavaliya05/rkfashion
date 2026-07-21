@@ -40,8 +40,8 @@ malefashion-master/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/malefashion.git
-cd malefashion
+git clone https://github.com/harshsavaliya05/rkfashion.git
+cd rkfashion
 ```
 
 ### 2. Backend Setup
